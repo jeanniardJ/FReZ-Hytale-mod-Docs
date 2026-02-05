@@ -15,6 +15,7 @@ N'hésitez pas à l'explorer et à la compléter !
 ## 📚 Référence API
 
 * **Général**
+    * [Authentication](api_reference/general/authentication.md)
     * [HytaleServer](api_reference/general/hytaleserver.md)
     * [Logging](api_reference/general/logging.md)
     * [Permissions](api_reference/general/permissions.md)
