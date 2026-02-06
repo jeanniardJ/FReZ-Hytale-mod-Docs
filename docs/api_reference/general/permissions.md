@@ -1,56 +1,66 @@
-# Permissions API
+# Système de Permissions
 
-Hytale dispose d'un système de permissions intégré pour gérer les droits des joueurs.
+Le système de permissions de Hytale permet de contrôler l'accès aux commandes et aux fonctionnalités.
 
-## Vérifier une permission
+## Définir les Permissions
 
-### Dans une commande (`CommandContext`)
+Dans vos classes de commande (héritant de `CommandBase` ou `AbstractCommand`), vous pouvez définir les permissions requises dans le constructeur.
 
 ```java
-@Override
-protected void execute(CommandContext context) {
-    // Si l'expéditeur est un joueur
-    if (context.isPlayer()) {
-        Player player = context.senderAs(Player.class);
-        
-        if (player.hasPermission("mon.plugin.admin")) {
-            // Action autorisée
-        } else {
-            context.sendMessage(Message.raw("Permission refusée."));
-        }
-    }
-    
-    // Si l'expéditeur est la console (ou autre)
-    else if (context.getSender().hasPermission("mon.plugin.admin")) {
-        // Action autorisée
+public class MyCommand extends CommandBase {
+    public MyCommand() {
+        super("mycommand", "description");
+
+        // Permission explicite
+        requirePermission("hytale.custom.mycommand");
+
+        // Alternativement, utiliser l'aide pour le format standard
+        requirePermission(HytalePermissions.fromCommand("mycommand"));
     }
 }
 ```
 
-### Sur une entité Joueur (`Player` / `PlayerRef`)
+## Génération de Permissions
 
-L'entité `Player` implémente l'interface `PermissionHolder`.
+Si aucune permission n'est explicitement définie, les permissions sont générées automatiquement :
+
+* **Commandes système** : `hytale.system.command.<nom>`
+* **Commandes de plugin** : `<plugin.basepermission>.command.<nom>`
+* **Sous-commandes** : `<parent.permission>.<nom>`
+
+## Groupes de Permissions
+
+Vous pouvez assigner des commandes à des groupes de permissions basés sur le mode de jeu.
 
 ```java
-// Depuis un PlayerRef (via l'entité associée)
-// Note : PlayerRef n'a pas hasPermission directement, il faut récupérer le composant Player
-// ou utiliser PermissionsModule.get().hasPermission(uuid, node)
+// Assigner au groupe de permission du mode Aventure
+setPermissionGroup(GameMode.Adventure);
+setPermissionGroup(GameMode.Creative);
 
-// Méthode recommandée si vous avez l'entité Player (ECS)
-if (playerEntity.hasPermission("mon.plugin.node")) {
-    // ...
-}
-
-// Méthode via le module global (si vous avez juste l'UUID)
-import com.hypixel.hytale.server.core.modules.permissions.PermissionsModule; // (Package à vérifier selon version)
-
-// PermissionsModule.get().hasPermission(playerUuid, "mon.plugin.node");
+// Assigner à plusieurs groupes
+setPermissionGroups("Adventure", "Creative");
 ```
 
-## Définir des permissions
+## Permissions au Niveau des Arguments
 
-Les permissions sont généralement définies dans des fichiers de configuration du serveur (`permissions.json` ou
-équivalent) ou gérées par un plugin de permissions tiers.
+Vous pouvez restreindre l'utilisation de certains arguments à des permissions spécifiques.
 
-Votre plugin doit simplement définir les nœuds qu'il utilise (ex: dans une classe `Permissions.java`) et les vérifier
-aux endroits critiques.
+```java
+private final OptionalArg<PlayerRef> playerArg =
+    withOptionalArg("player", "desc", ArgTypes.PLAYER_REF)
+        .setPermission("mycommand.target.other");
+```
+
+## Vérification des Permissions
+
+Vous pouvez vérifier les permissions manuellement dans votre code.
+
+```java
+// Pendant l'exécution d'une commande
+if (context.sender().hasPermission("some.permission")) {
+    // Permission accordée
+}
+
+// Méthode utilitaire (lance une NoPermissionException si la permission est refusée)
+CommandUtil.requirePermission(context.sender(), "some.permission");
+```

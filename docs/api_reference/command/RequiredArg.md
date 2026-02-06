@@ -2,28 +2,28 @@
 
 `com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg`
 
-A class representing a required argument in a command structure.
+Une classe représentant un argument requis dans la structure d'une commande.
 
-## Definition
+## Définition
 
 ```java
 public class RequiredArg<DataType> extends Argument<RequiredArg<DataType>, DataType>
 ```
 
-## Constructor
+## Constructeur
 
 ```java
 public RequiredArg(@Nonnull AbstractCommand commandRegisteredTo, @Nonnull String name, @Nonnull String description, @Nonnull ArgumentType<DataType> argumentType)
 ```
 
-* **commandRegisteredTo**: The command this argument belongs to.
-* **name**: The name of the argument.
-* **description**: A description of the argument.
-* **argumentType**: The type of the argument (must have at least 1 parameter).
+* **commandRegisteredTo**: La commande à laquelle cet argument appartient.
+* **name**: Le nom de l'argument.
+* **description**: Une description de l'argument.
+* **argumentType**: Le type de l'argument (doit avoir au moins 1 paramètre).
 
-Throws `IllegalArgumentException` if `argumentType.getNumberOfParameters() < 1`.
+Lève une `IllegalArgumentException` si `argumentType.getNumberOfParameters() < 1`.
 
-## Methods
+## Méthodes
 
 ### getUsageMessageWithoutDescription
 
@@ -31,7 +31,7 @@ Throws `IllegalArgumentException` if `argumentType.getNumberOfParameters() < 1`.
 @Nonnull
 public Message getUsageMessageWithoutDescription()
 ```
-Returns usage format like `<name:type>`.
+Retourne le format d'utilisation comme `<nom:type>`.
 
 ### getUsageMessage
 
@@ -39,7 +39,7 @@ Returns usage format like `<name:type>`.
 @Nonnull
 public Message getUsageMessage()
 ```
-Returns detailed usage like `name (type) -> "description"`.
+Retourne l'utilisation détaillée comme `nom (type) -> "description"`.
 
 ### getUsageOneLiner
 
@@ -47,4 +47,4 @@ Returns detailed usage like `name (type) -> "description"`.
 @Nonnull
 public Message getUsageOneLiner()
 ```
-Returns short usage like `<name>`.
+Retourne l'utilisation courte comme `<nom>`.
