@@ -20,6 +20,9 @@ N'hésitez pas à l'explorer et à la compléter !
     * [Logging](api_reference/general/logging.md)
     * [Permissions](api_reference/general/permissions.md)
     * [Universe](api_reference/general/universe.md)
+* **Commandes**
+    * [ArgTypes](api_reference/command/ArgTypes.md)
+    * [RequiredArg](api_reference/command/RequiredArg.md)
 * **Entités**
     * [Joueur (PlayerRef)](api_reference/entity/player.md)
 * **Événements**
