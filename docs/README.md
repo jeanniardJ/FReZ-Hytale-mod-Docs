@@ -12,6 +12,10 @@ N'hésitez pas à l'explorer et à la compléter !
 * [Architecture & Règles de Développement](1_ARCHITECTURE.md)
 * [Configuration & Codecs (JSON)](3_CONFIGURATION.md)
 
+## 🤖 Intégration IA
+
+Si vous souhaitez utiliser ce projet comme référence pour l'écriture de code avec l'intelligence artificielle, vous pouvez le télécharger et spécifier l'emplacement du fichier `com/hypixel/hytale` dans vos invites afin que l'agent puisse recevoir des informations sur le projet.
+
 ## 📚 Référence API
 
 * **Général**
@@ -19,6 +23,8 @@ N'hésitez pas à l'explorer et à la compléter !
     * [Logging](api_reference/general/logging.md)
     * [Permissions](api_reference/general/permissions.md)
     * [Universe](api_reference/general/universe.md)
+    * [API Core du Serveur Hytale (EN)](api_reference/server_core_api/HYTALE_CORE_API.md)
+    * [API Core du Serveur Hytale (TR)](api_reference/server_core_api/HYTALE_CORE_API_TR.md)
 * **Entités**
     * [Joueur (PlayerRef)](api_reference/entity/player.md)
 * **Événements**
