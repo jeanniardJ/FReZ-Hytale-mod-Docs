@@ -26,11 +26,21 @@ Si vous souhaitez utiliser ce projet comme référence pour l'écriture de code 
     * [Universe](api_reference/general/universe.md)
     * [API Core du Serveur Hytale (EN)](api_reference/server_core_api/HYTALE_CORE_API.md)
     * [API Core du Serveur Hytale (TR)](api_reference/server_core_api/HYTALE_CORE_API_TR.md)
+*   **Serveur Core**
+    *   [HytaleServer](./api_reference/server/core/HytaleServer.md)
+*   **Plugins Core**
+    *   [PluginManager](./api_reference/server/core/plugin/PluginManager.md)
+    *   [PluginBase](./api_reference/server/core/plugin/PluginBase.md)
+    *   [JavaPlugin](./api_reference/server/core/plugin/JavaPlugin.md)
+*   **Commandes Système**
+    *   [CommandManager](./api_reference/server/core/command/system/CommandManager.md)
+*   **Événements**
+    *   [EventBus](./api_reference/event/EventBus.md)
 * **Commandes**
     * [ArgTypes](api_reference/command/ArgTypes.md)
     * [RequiredArg](api_reference/command/RequiredArg.md)
-* **Entités**
-    * [Joueur (PlayerRef)](api_reference/entity/player.md)
+* **Entités (Player & PlayerRef)**
+    * [Référence API Entités](./api_reference/entity/README.md)
 * **Événements**
     * [Listeners](api_reference/event/listeners.md)
 * **Interface Utilisateur (UI)**
