@@ -19,12 +19,16 @@ Si vous souhaitez utiliser ce projet comme référence pour l'écriture de code 
 ## 📚 Référence API
 
 * **Général**
+    * [Authentication](api_reference/general/authentication.md)
     * [HytaleServer](api_reference/general/hytaleserver.md)
     * [Logging](api_reference/general/logging.md)
     * [Permissions](api_reference/general/permissions.md)
     * [Universe](api_reference/general/universe.md)
     * [API Core du Serveur Hytale (EN)](api_reference/server_core_api/HYTALE_CORE_API.md)
     * [API Core du Serveur Hytale (TR)](api_reference/server_core_api/HYTALE_CORE_API_TR.md)
+* **Commandes**
+    * [ArgTypes](api_reference/command/ArgTypes.md)
+    * [RequiredArg](api_reference/command/RequiredArg.md)
 * **Entités**
     * [Joueur (PlayerRef)](api_reference/entity/player.md)
 * **Événements**
