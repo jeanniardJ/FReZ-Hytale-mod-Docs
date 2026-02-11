@@ -1,156 +1,156 @@
-# Universe
+# Univers (Universe)
 
-The `Universe` class is a central and singleton component within the Hytale server, acting as the primary manager for all worlds, players, and global game state. It extends `JavaPlugin`, indicating its role as a core plugin that provides fundamental server functionalities. Mod developers will frequently interact with the `Universe` to access world instances, player data, and global events.
+La classe `Universe` est un composant central et "singleton" (unique) au sein du serveur Hytale. Elle agit comme le gestionnaire principal de tous les mondes, des joueurs et de l'état global du jeu. Elle étend `JavaPlugin`, ce qui indique son rôle de plugin de base fournissant des fonctionnalités serveur fondamentales. Les développeurs de mods interagiront fréquemment avec l'`Universe` pour accéder aux instances de monde, aux données des joueurs et aux événements globaux.
 
-## Constants
+## Constantes
 
 ### `public static final PluginManifest MANIFEST`
-The `PluginManifest` for the core Universe plugin, containing its metadata and dependencies.
+Le `PluginManifest` pour le plugin "core" `Universe`, contenant ses métadonnées et ses dépendances.
 
 ### `public static final MetricsRegistry<Universe> METRICS_REGISTRY`
-A `MetricsRegistry` specifically for the `Universe` class, used for tracking and reporting various server-wide metrics.
+Un `MetricsRegistry` spécifiquement pour la classe `Universe`, utilisé pour suivre et rapporter diverses métriques à l'échelle du serveur.
 
 ### `public static Map<Integer, String> LEGACY_BLOCK_ID_MAP`
-*Deprecated.* A map providing a lookup for legacy block IDs to their string representations. This is likely for backward compatibility with older world formats.
+*Déprécié.* Une carte (`Map`) fournissant une correspondance entre les anciens ID de bloc ("legacy block IDs") et leurs représentations sous forme de chaînes de caractères. Ceci est probablement destiné à la compatibilité ascendante avec les anciens formats de monde.
 
-## Static Methods
+## Méthodes Statiques
 
 ### `public static Universe get()`
-Retrieves the singleton instance of the `Universe`. This is the primary entry point for accessing all universe-level functionalities.
-- **Returns:** The singleton `Universe` instance.
+Récupère l'instance "singleton" de l'`Universe`. C'est le point d'entrée principal pour accéder à toutes les fonctionnalités au niveau de l'univers.
+- **Retourne :** L'instance unique de l'`Universe`.
 
 ### `public static Path getWorldGenPath()`
-Returns the `Path` to the directory where world generation configurations and assets are stored.
-- **Returns:** A `Path` object pointing to the world generation directory.
+Retourne le `Path` (chemin de fichier) vers le répertoire où sont stockées les configurations et les ressources de génération de monde.
+- **Retourne :** Un objet `Path` pointant vers le répertoire de génération de monde.
 
-## Methods
+## Méthodes
 
 ### `public CompletableFuture<Void> runBackup()`
-Initiates an asynchronous backup operation for the entire universe. This includes saving all currently loaded worlds.
-- **Returns:** A `CompletableFuture<Void>` that completes when the backup process is finished.
+Lance une opération de sauvegarde asynchrone (en arrière-plan) pour l'ensemble de l'univers. Cela inclut la sauvegarde de tous les mondes actuellement chargés.
+- **Retourne :** Un `CompletableFuture<Void>` qui se termine lorsque le processus de sauvegarde est terminé.
 
 ### `public void disconnectAllPLayers()`
-Forces all currently connected players to disconnect from the server. This is typically used during server shutdown or maintenance.
+Force tous les joueurs actuellement connectés à se déconnecter du serveur. Ceci est généralement utilisé lors de l'arrêt du serveur ou de la maintenance.
 
 ### `public void shutdownAllWorlds()`
-Initiates the shutdown process for all currently loaded worlds, ensuring their data is saved and resources are released. This is also typically used during server shutdown.
+Lance le processus d'arrêt pour tous les mondes actuellement chargés, garantissant que leurs données sont sauvegardées et que les ressources sont libérées. Ceci est également généralement utilisé lors de l'arrêt du serveur.
 
 ### `public CompletableFuture<Void> getUniverseReady()`
-Returns a `CompletableFuture` that completes once the `Universe` has fully loaded all its components, worlds, and is ready to accept player connections. Mod developers can use this to ensure the server is fully operational before executing certain logic.
-- **Returns:** A `CompletableFuture<Void>`.
+Retourne un `CompletableFuture` qui se termine une fois que l'`Universe` a entièrement chargé tous ses composants, ses mondes, et est prêt à accepter les connexions des joueurs. Les développeurs de mods peuvent l'utiliser pour s'assurer que le serveur est entièrement opérationnel avant d'exécuter une certaine logique.
+- **Retourne :** Un `CompletableFuture<Void>`.
 
 ### `public boolean isWorldLoadable(@Nonnull String name)`
-Checks if a world with the given `name` exists on disk within the universe's directory structure and is in a state where it can be loaded.
-- **Parameters:**
-    - `name`: The name of the world to check.
-- **Returns:** `true` if the world is loadable, `false` otherwise.
+Vérifie si un monde portant le `name` donné existe sur le disque dans la structure de répertoires de l'univers et est dans un état où il peut être chargé.
+- **Paramètres :**
+    - `name` : Le nom du monde à vérifier.
+- **Retourne :** `true` si le monde est chargeable, `false` sinon.
 
 ### `public CompletableFuture<World> addWorld(@Nonnull String name)`
-Asynchronously adds a new world to the universe with the specified `name`, using default world generation and storage configurations.
-- **Parameters:**
-    - `name`: The name of the new world.
-- **Returns:** A `CompletableFuture<World>` that completes with the newly created `World` instance.
-- **Throws:** `IllegalArgumentException` if a world with the given name already exists or is loadable from disk.
+Ajoute de manière asynchrone un nouveau monde à l'univers avec le `name` spécifié, en utilisant les configurations par défaut de génération de monde et de stockage.
+- **Paramètres :**
+    - `name` : Le nom du nouveau monde.
+- **Retourne :** Un `CompletableFuture<World>` qui se termine avec l'instance `World` nouvellement créée.
+- **Lance :** `IllegalArgumentException` si un monde portant le nom donné existe déjà ou est chargeable depuis le disque.
 
 ### `public CompletableFuture<World> addWorld(@Nonnull String name, @Nullable String generatorType, @Nullable String chunkStorageType)`
-*Deprecated.* Asynchronously adds a new world to the universe with the specified `name`, allowing for custom `generatorType` and `chunkStorageType`. This method is deprecated, suggesting that world creation with custom providers might be handled differently in newer versions.
-- **Parameters:**
-    - `name`: The name of the new world.
-    - `generatorType`: An optional string specifying the type of world generator to use (e.g., "Hytale", "Flat").
-    - `chunkStorageType`: An optional string specifying the type of chunk storage provider to use.
-- **Returns:** A `CompletableFuture<World>`.
+*Déprécié.* Ajoute de manière asynchrone un nouveau monde à l'univers avec le `name` spécifié, permettant des `generatorType` (type de générateur) et `chunkStorageType` (type de stockage de "chunks") personnalisés. Cette méthode est dépréciée, ce qui suggère que la création de monde avec des fournisseurs personnalisés pourrait être gérée différemment dans les nouvelles versions.
+- **Paramètres :**
+    - `name` : Le nom du nouveau monde.
+    - `generatorType` : Une chaîne de caractères optionnelle spécifiant le type de générateur de monde à utiliser (par exemple, "Hytale", "Flat").
+    - `chunkStorageType` : Une chaîne de caractères optionnelle spécifiant le type de fournisseur de stockage de "chunks" à utiliser.
+- **Retourne :** Un `CompletableFuture<World>`.
 
 ### `public CompletableFuture<World> makeWorld(@Nonnull String name, @Nonnull Path savePath, @Nonnull WorldConfig worldConfig)`
-Asynchronously creates a `World` instance with a given `name`, `savePath`, and `WorldConfig`. This is a more direct way to instantiate a world.
-- **Parameters:**
-    - `name`: The name of the world.
-    - `savePath`: The `Path` where the world data will be saved.
-    - `worldConfig`: The `WorldConfig` defining the world's properties.
-- **Returns:** A `CompletableFuture<World>`.
+Crée de manière asynchrone une instance de `World` avec un `name`, un `savePath` (chemin de sauvegarde) et une `WorldConfig` (configuration du monde) donnés. C'est un moyen plus direct d'instancier un monde.
+- **Paramètres :**
+    - `name` : Le nom du monde.
+    - `savePath` : Le `Path` où les données du monde seront sauvegardées.
+    - `worldConfig` : La `WorldConfig` définissant les propriétés du monde.
+- **Retourne :** Un `CompletableFuture<World>`.
 
 ### `public CompletableFuture<World> loadWorld(@Nonnull String name)`
-Asynchronously loads an existing world from disk with the specified `name`.
-- **Parameters:**
-    - `name`: The name of the world to load.
-- **Returns:** A `CompletableFuture<World>` that completes with the loaded `World` instance.
-- **Throws:** `IllegalArgumentException` if the world is already loaded or does not exist on disk.
+Charge de manière asynchrone un monde existant depuis le disque avec le `name` spécifié.
+- **Paramètres :**
+    - `name` : Le nom du monde à charger.
+- **Retourne :** Un `CompletableFuture<World>` qui se termine avec l'instance `World` chargée.
+- **Lance :** `IllegalArgumentException` si le monde est déjà chargé ou n'existe pas sur le disque.
 
 ### `public World getWorld(@Nullable String worldName)`
-Retrieves a loaded `World` instance by its name. The name is case-insensitive.
-- **Parameters:**
-    - `worldName`: The name of the world to retrieve.
-- **Returns:** The `World` instance if found, `null` otherwise.
+Récupère une instance de `World` chargée par son nom. Le nom est insensible à la casse.
+- **Paramètres :**
+    - `worldName` : Le nom du monde à récupérer.
+- **Retourne :** L'instance de `World` si trouvée, `null` sinon.
 
 ### `public World getWorld(@Nonnull UUID uuid)`
-Retrieves a loaded `World` instance by its unique `UUID`.
-- **Parameters:**
-    - `uuid`: The `UUID` of the world to retrieve.
-- **Returns:** The `World` instance if found, `null` otherwise.
+Récupère une instance de `World` chargée par son `UUID` unique.
+- **Paramètres :**
+    - `uuid` : L'`UUID` du monde à récupérer.
+- **Retourne :** L'instance de `World` si trouvée, `null` sinon.
 
 ### `public World getDefaultWorld()`
-Retrieves the `World` instance configured as the default world for the server.
-- **Returns:** The default `World` instance, or `null` if no default world is configured or loaded.
+Récupère l'instance de `World` configurée comme monde par défaut pour le serveur.
+- **Retourne :** L'instance du monde par défaut, ou `null` si aucun monde par défaut n'est configuré ou chargé.
 
 ### `public boolean removeWorld(@Nonnull String name)`
-Removes a world with the specified `name` from the universe. This will stop the world and save its data, if necessary, then unload it.
-- **Parameters:**
-    - `name`: The name of the world to remove.
-- **Returns:** `true` if the world was successfully removed, `false` if the removal was cancelled by an event listener.
-- **Throws:** `NullPointerException` if the world does not exist.
+Supprime un monde portant le `name` spécifié de l'univers. Cela arrêtera le monde et sauvegardera ses données, si nécessaire, puis le déchargera.
+- **Paramètres :**
+    - `name` : Le nom du monde à supprimer.
+- **Retourne :** `true` si le monde a été supprimé avec succès, `false` si la suppression a été annulée par un écouteur d'événements.
+- **Lance :** `NullPointerException` si le monde n'existe pas.
 
 ### `public Path getPath()`
-Retrieves the root `Path` of the universe directory where all world data and other universe-level files are stored.
-- **Returns:** A `Path` object.
+Récupère le `Path` racine du répertoire de l'univers où toutes les données du monde et d'autres fichiers au niveau de l'univers sont stockées.
+- **Retourne :** Un objet `Path`.
 
 ### `public Map<String, World> getWorlds()`
-Returns an unmodifiable `Map` of all currently loaded `World` instances in the universe, mapped by their names (case-insensitive).
-- **Returns:** An unmodifiable `Map<String, World>`.
+Retourne une `Map` (carte) non modifiable de toutes les instances de `World` actuellement chargées dans l'univers, mappées par leurs noms (insensible à la casse).
+- **Retourne :** Une `Map<String, World>` non modifiable.
 
 ### `public List<PlayerRef> getPlayers()`
-Returns a list of all `PlayerRef` instances representing currently connected players.
-- **Returns:** A `List` of `PlayerRef` objects.
+Retourne une liste de toutes les instances de `PlayerRef` représentant les joueurs actuellement connectés.
+- **Retourne :** Une `List` d'objets `PlayerRef`.
 
 ### `public PlayerRef getPlayer(@Nonnull UUID uuid)`
-Retrieves a `PlayerRef` for a connected player using their `UUID`.
-- **Parameters:**
-    - `uuid`: The `UUID` of the player to retrieve.
-- **Returns:** The `PlayerRef` instance if the player is connected, `null` otherwise.
+Récupère une `PlayerRef` pour un joueur connecté en utilisant son `UUID`.
+- **Paramètres :**
+    - `uuid` : L'`UUID` du joueur à récupérer.
+- **Retourne :** L'instance de `PlayerRef` si le joueur est connecté, `null` sinon.
 
 ### `public PlayerRef getPlayer(@Nonnull String value, @Nonnull NameMatching matching)`
-Retrieves a `PlayerRef` for a connected player by matching their username against the provided `value` using a specified `NameMatching` strategy.
-- **Parameters:**
-    - `value`: The string to match against player usernames.
-    - `matching`: The `NameMatching` strategy to use (e.g., `EXACT`, `STARTS_WITH`, `CONTAINS`).
-- **Returns:** The `PlayerRef` instance if a match is found, `null` otherwise.
+Récupère une `PlayerRef` pour un joueur connecté en faisant correspondre son nom d'utilisateur à la `value` fournie en utilisant une stratégie `NameMatching` spécifiée.
+- **Paramètres :**
+    - `value` : La chaîne à faire correspondre aux noms d'utilisateur des joueurs.
+    - `matching` : La stratégie `NameMatching` à utiliser (par exemple, `EXACT`, `STARTS_WITH`, `CONTAINS`).
+- **Retourne :** L'instance de `PlayerRef` si une correspondance est trouvée, `null` sinon.
 
 ### `public int getPlayerCount()`
-Returns the total number of players currently connected to the server.
-- **Returns:** An `int` representing the player count.
+Retourne le nombre total de joueurs actuellement connectés au serveur.
+- **Retourne :** Un `int` représentant le nombre de joueurs.
 
 ### `public void removePlayer(@Nonnull PlayerRef playerRef)`
-Removes a connected player from the universe. This handles their disconnection and cleanup.
-- **Parameters:**
-    - `playerRef`: The `PlayerRef` of the player to remove.
+Supprime un joueur connecté de l'univers. Cela gère sa déconnexion et son nettoyage.
+- **Paramètres :**
+    - `playerRef` : Le `PlayerRef` du joueur à supprimer.
 
 ### `public void sendMessage(@Nonnull Message message)`
-Broadcasts a `Message` to all currently connected players in the universe.
-- **Parameters:**
-    - `message`: The `Message` object to send.
+Diffuse un `Message` à tous les joueurs actuellement connectés dans l'univers.
+- **Paramètres :**
+    - `message` : L'objet `Message` à envoyer.
 
 ### `public void broadcastPacket(@Nonnull Packet packet)`
-Broadcasts a single `Packet` to all currently connected players.
-- **Parameters:**
-    - `packet`: The `Packet` to send.
+Diffuse un seul `Packet` à tous les joueurs actuellement connectés.
+- **Paramètres :**
+    - `packet` : Le `Packet` à envoyer.
 
 ### `public void broadcastPacket(@Nonnull Packet... packets)`
-Broadcasts multiple `Packet`s to all currently connected players.
-- **Parameters:**
-    - `packets`: An array of `Packet` objects to send.
+Diffuse plusieurs `Packet`s à tous les joueurs actuellement connectés.
+- **Paramètres :**
+    - `packets` : Un tableau d'objets `Packet` à envoyer.
 
 ### `public PlayerStorage getPlayerStorage()`
-Retrieves the `PlayerStorage` instance responsible for loading and saving player data.
-- **Returns:** The `PlayerStorage` instance.
+Récupère l'instance de `PlayerStorage` responsable du chargement et de la sauvegarde des données des joueurs.
+- **Retourne :** L'instance de `PlayerStorage`.
 
 ### `public WorldConfigProvider getWorldConfigProvider()`
-Retrieves the `WorldConfigProvider` instance used for loading and managing world configurations.
-- **Returns:** The `WorldConfigProvider` instance.
+Récupère l'instance de `WorldConfigProvider` utilisée pour charger et gérer les configurations de monde.
+- **Retourne :** L'instance de `WorldConfigProvider`.

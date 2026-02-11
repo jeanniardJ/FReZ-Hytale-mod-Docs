@@ -1,96 +1,96 @@
 # HytaleServer
 
-The `HytaleServer` class is the main entry point and core orchestrator for the Hytale server application. It manages the server's lifecycle, including booting, plugin management, command handling, and shutdown.
+La classe `HytaleServer` est le point d'entrée principal et l'orchestrateur central de l'application serveur Hytale. Elle gère le cycle de vie du serveur, incluant le démarrage (boot), la gestion des plugins, la gestion des commandes et l'arrêt (shutdown).
 
-## Constructor
+## Constructeur
 
 ### `public HytaleServer() throws IOException`
-Initializes a new instance of the Hytale server. This constructor sets up the server's core components, loads configuration, initializes authentication, and registers shutdown hooks.
+Initialise une nouvelle instance du serveur Hytale. Ce constructeur configure les composants essentiels du serveur, charge la configuration, initialise l'authentification et enregistre les "hooks" d'arrêt (des actions à exécuter avant l'arrêt).
 
-## Methods
+## Méthodes
 
 ### `public EventBus getEventBus()`
-Retrieves the server's `EventBus` instance, which is used for dispatching and subscribing to server events.
-- **Returns:** The `EventBus` instance.
+Récupère l'instance de l'`EventBus` du serveur. L'EventBus est utilisé pour envoyer et s'abonner aux événements du serveur. Pensez-y comme à un système de notification : quand quelque chose se passe (un événement), l'EventBus le diffuse, et d'autres parties du code (vos plugins, par exemple) peuvent "écouter" ces notifications.
+- **Retourne :** L'instance de l'`EventBus`.
 
 ### `public PluginManager getPluginManager()`
-Retrieves the server's `PluginManager` instance, responsible for loading, managing, and interacting with plugins.
-- **Returns:** The `PluginManager` instance.
+Récupère l'instance du `PluginManager` du serveur. C'est le responsable du chargement, de la gestion et de l'interaction avec tous les plugins (vos mods).
+- **Retourne :** L'instance du `PluginManager`.
 
 ### `public CommandManager getCommandManager()`
-Retrieves the server's `CommandManager` instance, used for registering and handling server commands.
-- **Returns:** The `CommandManager` instance.
+Récupère l'instance du `CommandManager` du serveur. Il est utilisé pour enregistrer et gérer les commandes du serveur (comme `/teleport` ou vos propres commandes personnalisées).
+- **Retourne :** L'instance du `CommandManager`.
 
 ### `public HytaleServerConfig getConfig()`
-Retrieves the current server configuration.
-- **Returns:** The `HytaleServerConfig` instance.
+Récupère la configuration actuelle du serveur. C'est ici que vous trouverez des paramètres importants comme le nombre maximal de joueurs, etc.
+- **Retourne :** L'instance de `HytaleServerConfig`.
 
 ### `public void shutdownServer()`
-Initiates a graceful shutdown of the Hytale server with a default shutdown reason.
+Lance un arrêt ordonné du serveur Hytale avec une raison d'arrêt par défaut. Un arrêt ordonné signifie que le serveur essaie de sauvegarder les données et de fermer les connexions proprement.
 
 ### `public void shutdownServer(@Nonnull ShutdownReason reason)`
-Initiates a graceful shutdown of the Hytale server with a specified reason.
-- **Parameters:**
-    - `reason`: The `ShutdownReason` enum indicating why the server is shutting down.
+Lance un arrêt ordonné du serveur Hytale avec une raison spécifique.
+- **Paramètres :**
+    - `reason` : L'énumération `ShutdownReason` qui indique la raison de l'arrêt du serveur (par exemple, arrêt normal, erreur critique).
 
 ### `public void doneSetup(PluginBase plugin)`
-Called by the `PluginManager` when a plugin has completed its setup phase.
-- **Parameters:**
-    - `plugin`: The `PluginBase` instance that completed setup.
+Appelée par le `PluginManager` lorsqu'un plugin a terminé sa phase de configuration (setup). C'est une méthode interne.
+- **Paramètres :**
+    - `plugin` : L'instance de `PluginBase` qui a terminé sa configuration.
 
 ### `public void doneStart(PluginBase plugin)`
-Called by the `PluginManager` when a plugin has completed its start phase.
-- **Parameters:**
-    - `plugin`: The `PluginBase` instance that completed startup.
+Appelée par le `PluginManager` lorsqu'un plugin a terminé sa phase de démarrage (start). C'est une méthode interne.
+- **Paramètres :**
+    - `plugin` : L'instance de `PluginBase` qui a terminé son démarrage.
 
 ### `public void doneStop(PluginBase plugin)`
-Called by the `PluginManager` when a plugin has completed its stop phase.
-- **Parameters:**
-    - `plugin`: The `PluginBase` instance that completed stopping.
+Appelée par le `PluginManager` lorsqu'un plugin a terminé sa phase d'arrêt (stop). C'est une méthode interne.
+- **Paramètres :**
+    - `plugin` : L'instance de `PluginBase` qui a terminé son arrêt.
 
 ### `public void sendSingleplayerProgress()`
-Sends progress updates related to single-player server loading/shutdown.
+Envoie des mises à jour de progression liées au chargement ou à l'arrêt du serveur en mode solo (singleplayer).
 
 ### `public String getServerName()`
-Retrieves the configured name of the server.
-- **Returns:** The server's name as a `String`.
+Récupère le nom configuré du serveur.
+- **Retourne :** Le nom du serveur sous forme de `String`.
 
 ### `public boolean isBooting()`
-Checks if the server is currently in the booting process.
-- **Returns:** `true` if the server is booting, `false` otherwise.
+Vérifie si le serveur est actuellement en cours de démarrage.
+- **Retourne :** `true` si le serveur est en phase de démarrage, `false` sinon.
 
 ### `public boolean isBooted()`
-Checks if the server has successfully completed its booting process.
-- **Returns:** `true` if the server has booted, `false` otherwise.
+Vérifie si le serveur a terminé son processus de démarrage avec succès.
+- **Retourne :** `true` si le serveur a démarré, `false` sinon.
 
 ### `public boolean isShuttingDown()`
-Checks if the server is currently in the process of shutting down.
-- **Returns:** `true` if the server is shutting down, `false` otherwise.
+Vérifie si le serveur est actuellement en cours d'arrêt.
+- **Retourne :** `true` si le serveur s'arrête, `false` sinon.
 
 ### `public Instant getBoot()`
-Retrieves the `Instant` when the server's boot process began.
-- **Returns:** An `Instant` representing the boot time.
+Récupère l'`Instant` (un point dans le temps) où le processus de démarrage du serveur a commencé.
+- **Retourne :** Un `Instant` représentant l'heure de démarrage.
 
 ### `public long getBootStart()`
-Retrieves the system's nano time when the server's boot process began.
-- **Returns:** A `long` representing the boot start time in nanoseconds.
+Récupère le temps en nanosecondes du système lorsque le processus de démarrage du serveur a commencé.
+- **Retourne :** Un `long` représentant le temps de démarrage en nanosecondes.
 
 ### `public ShutdownReason getShutdownReason()`
-Retrieves the reason for the server's shutdown, if any.
-- **Returns:** The `ShutdownReason` enum, or `null` if the server is not shutting down.
+Récupère la raison de l'arrêt du serveur, si le serveur est en cours d'arrêt.
+- **Retourne :** L'énumération `ShutdownReason`, ou `null` si le serveur ne s'arrête pas.
 
 ### `public void reportSingleplayerStatus(String message)`
-Reports a status message specifically for single-player mode.
-- **Parameters:**
-    - `message`: The status message to report.
+Rapporte un message de statut spécifiquement pour le mode solo.
+- **Paramètres :**
+    - `message` : Le message de statut à rapporter.
 
 ### `public void reportSaveProgress(@Nonnull World world, int saved, int total)`
-Reports the progress of world saving operations, typically during shutdown.
-- **Parameters:**
-    - `world`: The `World` instance being saved.
-    - `saved`: The number of chunks saved so far.
-    - `total`: The total number of chunks to save.
+Rapporte la progression des opérations de sauvegarde du monde, généralement pendant l'arrêt.
+- **Paramètres :`
+    - `world` : L'instance du `World` en cours de sauvegarde.
+    - `saved` : Le nombre de "chunks" (morceaux de monde) sauvegardés jusqu'à présent.
+    - `total` : Le nombre total de "chunks" à sauvegarder.
 
 ### `public static HytaleServer get()`
-Retrieves the singleton instance of the `HytaleServer`.
-- **Returns:** The `HytaleServer` instance.
+Récupère l'instance "singleton" du `HytaleServer`. Un "singleton" est une classe dont il n'existe qu'une seule instance dans toute l'application. C'est la manière principale d'accéder aux fonctionnalités du serveur Hytale.
+- **Retourne :** L'instance unique du `HytaleServer`.

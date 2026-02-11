@@ -1,143 +1,143 @@
-# Entity
+# Entité (Entity)
 
-The `Entity` class represents any interactive object or being within the Hytale world. This can include players, NPCs, creatures, items, and more. Entities are built upon a component-based architecture, meaning their behaviors and properties are defined by various `Component`s attached to them and stored within an `EntityStore`.
+La classe `Entity` représente tout objet ou être interactif dans le monde de Hytale. Cela inclut les joueurs, les PNJ (Personnages Non Joueurs), les créatures, les objets, et bien plus encore. Les entités sont construites sur une architecture basée sur les composants (`component-based architecture`), ce qui signifie que leurs comportements et propriétés sont définis par divers `Component`s (composants) qui leur sont attachés et stockés dans un `EntityStore`.
 
-Many methods related to direct manipulation of entity properties might be marked `@Deprecated` or `forRemoval = true`, indicating a shift towards a more component-driven approach for modifying entity behavior and data. Mod developers should favor interacting with entities through their attached `Component`s and the `EntityStore` where possible.
+De nombreuses méthodes liées à la manipulation directe des propriétés d'entité peuvent être marquées `@Deprecated` (dépréciées) ou `forRemoval = true` (destinées à être supprimées). Cela indique une évolution vers une approche davantage axée sur les composants pour modifier le comportement et les données des entités. Les développeurs de mods devraient privilégier l'interaction avec les entités via leurs `Component`s attachés et l'`EntityStore` lorsque cela est possible.
 
-## Constants
+## Constantes
 
 ### `public static final int VERSION = 5`
-The current version of the entity serialization format.
+La version actuelle du format de sérialisation (sauvegarde et chargement) des entités.
 
 ### `public static final KeyedCodec<Model.ModelReference> MODEL`
-A `KeyedCodec` used for encoding and decoding the `Model.ModelReference` component of an entity, which defines its visual model.
+Un `KeyedCodec` utilisé pour l'encodage et le décodage du composant `Model.ModelReference` d'une entité, qui définit son modèle visuel. Un "codec" est un système pour convertir des données d'un format à un autre.
 
 ### `public static final KeyedCodec<String> DISPLAY_NAME`
-A `KeyedCodec` used for encoding and decoding the display name of an entity.
+Un `KeyedCodec` utilisé pour l'encodage et le décodage du nom affiché d'une entité.
 
 ### `public static final KeyedCodec<UUID> UUID`
-A `KeyedCodec` used for encoding and decoding the unique `UUID` of an entity.
+Un `KeyedCodec` utilisé pour l'encodage et le décodage de l'`UUID` unique (identifiant universel unique) d'une entité.
 
 ### `public static final BuilderCodec<Entity> CODEC`
-A `BuilderCodec` used for the serialization and deserialization of `Entity` objects.
+Un `BuilderCodec` utilisé pour la sérialisation et la désérialisation des objets `Entity`.
 
 ### `public static final int UNASSIGNED_ID = -1`
-A constant representing an unassigned network ID for an entity.
+Une constante représentant un ID réseau non assigné pour une entité. Un ID réseau est un identifiant temporaire utilisé par le serveur pour suivre les entités en ligne.
 
-## Constructors
+## Constructeurs
 
 ### `public Entity()`
-The default constructor for creating an `Entity` instance.
+Le constructeur par défaut pour créer une instance de `Entity`.
 
 ### `public Entity(@Nullable World world)`
-*Deprecated.* A constructor that initializes an `Entity` and associates it with a specific `World`. This method is deprecated, suggesting that entities should be created and managed through more explicit component-based systems or dedicated entity creation methods.
+*Déprécié.* Un constructeur qui initialise une `Entity` et l'associe à un `World` spécifique. Cette méthode est dépréciée, ce qui suggère que les entités devraient être créées et gérées par des systèmes basés sur des composants plus explicites ou des méthodes de création d'entités dédiées.
 
-## Methods
+## Méthodes
 
 ### `public boolean remove()`
-Attempts to remove the entity from its current world. This will trigger an `EntityRemoveEvent` and clear the entity's reference in the `EntityStore`.
-- **Returns:** `true` if the entity was successfully marked for removal, `false` otherwise (e.g., if it was already removed).
+Tente de supprimer l'entité de son monde actuel. Cela déclenchera un `EntityRemoveEvent` (un événement de suppression d'entité) et effacera la référence de l'entité dans l'`EntityStore`.
+- **Retourne :** `true` si l'entité a été marquée avec succès pour suppression, `false` sinon (par exemple, si elle était déjà supprimée).
 
 ### `public void loadIntoWorld(@Nonnull World world)`
-Loads this entity into the specified `World`. This method sets the entity's associated `World` and assigns a network ID if one hasn't been assigned yet.
-- **Parameters:**
-    - `world`: The `World` instance into which the entity should be loaded.
-- **Throws:** `IllegalArgumentException` if the entity is already in a world.
+Charge cette entité dans le `World` spécifié. Cette méthode définit le `World` associé à l'entité et lui attribue un ID réseau si ce n'est pas déjà fait.
+- **Paramètres :**
+    - `world` : L'instance du `World` dans lequel l'entité doit être chargée.
+- **Lance :** `IllegalArgumentException` si l'entité est déjà dans un monde.
 
 ### `public void unloadFromWorld()`
-Unloads the entity from its current `World`. This clears the entity's `World` association and resets its network ID.
-- **Throws:** `IllegalArgumentException` if the entity is not currently in a world.
+Décharge l'entité de son `World` actuel. Cela efface l'association de l'entité avec le `World` et réinitialise son ID réseau.
+- **Lance :** `IllegalArgumentException` si l'entité n'est pas actuellement dans un monde.
 
 ### `public World getWorld()`
-Retrieves the `World` instance that this entity is currently loaded into.
-- **Returns:** The `World` instance, or `null` if the entity is not currently in a world.
+Récupère l'instance du `World` dans lequel cette entité est actuellement chargée.
+- **Retourne :** L'instance du `World`, ou `null` si l'entité n'est pas actuellement dans un monde.
 
 ### `public boolean wasRemoved()`
-Checks if this entity has been marked for removal.
-- **Returns:** `true` if the entity was removed, `false` otherwise.
+Vérifie si cette entité a été marquée pour suppression.
+- **Retourne :** `true` si l'entité a été supprimée, `false` sinon.
 
 ### `public boolean isCollidable()`
-Checks if this entity is considered collidable.
-- **Returns:** `true` if the entity can collide with other objects, `false` otherwise.
+Vérifie si cette entité est considérée comme "collidable" (c'est-à-dire si elle peut entrer en collision avec d'autres objets).
+- **Retourne :** `true` si l'entité peut entrer en collision avec d'autres objets, `false` sinon.
 
 ### `public boolean isHiddenFromLivingEntity(@Nonnull Ref<EntityStore> ref, @Nonnull Ref<EntityStore> targetRef, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-Determines if this entity should be hidden from a specified living entity.
-- **Parameters:**
-    - `ref`: A `Ref` to this entity in the `EntityStore`.
-    - `targetRef`: A `Ref` to the target living entity.
-    - `componentAccessor`: An accessor for entity components.
-- **Returns:** `true` if this entity should be hidden from the target entity, `false` otherwise.
+Détermine si cette entité doit être cachée à une entité vivante spécifiée.
+- **Paramètres :**
+    - `ref` : Une `Ref` vers cette entité dans l'`EntityStore`.
+    - `targetRef` : Une `Ref` vers l'entité vivante cible.
+    - `componentAccessor` : Un accesseur pour les composants d'entité.
+- **Retourne :** `true` si cette entité doit être cachée à l'entité cible, `false` sinon.
 
 ### `public void setReference(@Nonnull Ref<EntityStore> reference)`
-Sets the internal `Ref` that points to this entity's data within the `EntityStore`. This method should typically be managed by the entity system.
-- **Parameters:**
-    - `reference`: The `Ref` to associate with this entity.
-- **Throws:** `IllegalArgumentException` if the entity already has a valid reference.
+Définit la `Ref` interne qui pointe vers les données de cette entité dans l'`EntityStore`. Cette méthode doit généralement être gérée par le système d'entités lui-même, pas directement par les développeurs de mods.
+- **Paramètres :**
+    - `reference` : La `Ref` à associer à cette entité.
+- **Lance :** `IllegalArgumentException` si l'entité a déjà une référence valide.
 
 ### `public Ref<EntityStore> getReference()`
-Retrieves the `Ref` that points to this entity's data within the `EntityStore`.
-- **Returns:** The `Ref<EntityStore>` for this entity, or `null` if not set.
+Récupère la `Ref` qui pointe vers les données de cette entité dans l'`EntityStore`.
+- **Retourne :** La `Ref<EntityStore>` pour cette entité, ou `null` si non définie.
 
 ### `public Component<EntityStore> clone()`
-Creates a deep clone of this `Entity` instance, including all its components.
-- **Returns:** A new `Entity` instance that is a copy of the current one.
+Crée un "clone" (une copie en profondeur) de cette instance de `Entity`, incluant tous ses composants.
+- **Retourne :** Une nouvelle instance de `Entity` qui est une copie de l'actuelle.
 
 ### `public Holder<EntityStore> toHolder()`
-Converts this `Entity` instance and its associated components into an `Holder<EntityStore>`, which is a container for entity data used by the component system.
-- **Returns:** An `Holder<EntityStore>` containing the entity's data.
+Convertit cette instance d'`Entity` et ses composants associés en un `Holder<EntityStore>`, qui est un conteneur pour les données d'entité utilisé par le système de composants.
+- **Retourne :** Un `Holder<EntityStore>` contenant les données de l'entité.
 
-## Deprecated Methods
+## Méthodes Dépréciées
 
-The following methods are deprecated and should be avoided in new code. They are likely retained for backward compatibility or are being phased out in favor of component-based interactions.
+Les méthodes suivantes sont dépréciées et devraient être évitées dans le nouveau code. Elles sont probablement conservées pour la compatibilité ascendante ou sont progressivement remplacées par des interactions basées sur les composants.
 
 ### `public void setLegacyUUID(@Nullable UUID uuid)`
-*Deprecated.* Sets a legacy `UUID` for the entity.
+*Déprécié.* Définit un `UUID` "legacy" (ancien format) pour l'entité.
 
 ### `public int getNetworkId()`
-*Deprecated.* Retrieves the network ID assigned to this entity.
+*Déprécié.* Récupère l'ID réseau attribué à cette entité.
 
 ### `public String getLegacyDisplayName()`
-*Deprecated.* Retrieves the legacy display name of the entity.
+*Déprécié.* Récupère l'ancien nom affiché de l'entité.
 
 ### `public UUID getUuid()`
-*Deprecated.* Retrieves the `UUID` of the entity.
+*Déprécié.* Récupère l'`UUID` de l'entité.
 
 ### `public void setTransformComponent(TransformComponent transform)`
-*Deprecated.* Sets the `TransformComponent` for the entity.
+*Déprécié.* Définit le `TransformComponent` (composant de transformation) pour l'entité.
 
 ### `public TransformComponent getTransformComponent()`
-*Deprecated.* Retrieves the `TransformComponent` of the entity.
+*Déprécié.* Récupère le `TransformComponent` de l'entité.
 
 ### `public void moveTo(@Nonnull Ref<EntityStore> ref, double locX, double locY, double locZ, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-*Deprecated.* Moves the entity to the specified coordinates.
+*Déprécié.* Déplace l'entité aux coordonnées spécifiées.
 
 ### `public void clearReference()`
-*Deprecated.* Clears the entity's internal reference.
+*Déprécié.* Efface la référence interne de l'entité.
 
-## Nested Class: `DefaultAnimations`
+## Classe Imbriquée : `DefaultAnimations`
 
-The `DefaultAnimations` nested static class provides utility methods and constants for common animation IDs.
+La classe statique imbriquée `DefaultAnimations` fournit des méthodes utilitaires et des constantes pour les ID d'animation courants.
 
-### Constants
+### Constantes
 
--   `public static final String DEATH = "Death"`
--   `public static final String HURT = "Hurt"`
--   `public static final String DESPAWN = "Despawn"`
--   `public static final String SWIM_SUFFIX = "Swim"`
--   `public static final String FLY_SUFFIX = "Fly"`
+-   `public static final String DEATH = "Death"` (Animation de mort)
+-   `public static final String HURT = "Hurt"` (Animation de blessure)
+-   `public static final String DESPAWN = "Despawn"` (Animation de disparition)
+-   `public static final String SWIM_SUFFIX = "Swim"` (Suffixe pour les animations de nage, par exemple "HurtSwim")
+-   `public static final String FLY_SUFFIX = "Fly"` (Suffixe pour les animations de vol, par exemple "HurtFly")
 
-### Methods
+### Méthodes
 
 ### `public static String[] getHurtAnimationIds(@Nonnull MovementStates movementStates, @Nonnull DamageCause damageCause)`
-Generates an array of animation IDs relevant to being hurt, considering the entity's `MovementStates` (e.g., swimming, flying) and the `DamageCause`.
-- **Parameters:**
-    - `movementStates`: The current `MovementStates` of the entity.
-    - `damageCause`: The `DamageCause` that inflicted the damage.
-- **Returns:** An array of `String` animation IDs.
+Génère un tableau d'ID d'animation pertinents pour être blessé, en tenant compte des `MovementStates` (états de mouvement) de l'entité (par exemple, nage, vol) et de la `DamageCause` (cause des dégâts).
+- **Paramètres :**
+    - `movementStates` : Les `MovementStates` actuels de l'entité.
+    - `damageCause` : La `DamageCause` qui a infligé les dégâts.
+- **Retourne :** Un tableau de `String` (ID d'animation).
 
 ### `public static String[] getDeathAnimationIds(@Nonnull MovementStates movementStates, @Nonnull DamageCause damageCause)`
-Generates an array of animation IDs relevant to the entity's death, considering its `MovementStates` and the `DamageCause`.
-- **Parameters:**
-    - `movementStates`: The current `MovementStates` of the entity.
-    - `damageCause`: The `DamageCause` that led to the death.
-- **Returns:** An array of `String` animation IDs.
+Génère un tableau d'ID d'animation pertinents pour la mort de l'entité, en tenant compte de ses `MovementStates` et de la `DamageCause`.
+- **Paramètres :**
+    - `movementStates` : Les `MovementStates` actuels de l'entité.
+    - `damageCause` : La `DamageCause` qui a conduit à la mort.
+- **Retourne :** Un tableau de `String` (ID d'animation).

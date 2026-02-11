@@ -1,7 +1,7 @@
-# Server World Generation API Reference
+# Référence API du Système de Génération de Monde du Serveur
 
-This section provides detailed API documentation for the Hytale server's world generation system. These classes are relevant for understanding how the game world is created and can be extended or customized by mod developers.
+Cette section fournit une documentation API détaillée pour le système de génération de monde du serveur Hytale. Ces classes sont pertinentes pour comprendre comment le monde du jeu est créé et peuvent être étendues ou personnalisées par les développeurs de mods.
 
 ## Classes
 
--   [`HytaleWorldGenProvider`](./HytaleWorldGenProvider.md): The default provider for configuring and retrieving Hytale's world generation logic.
+-   [`HytaleWorldGenProvider`](./HytaleWorldGenProvider.md) : Le fournisseur par défaut pour configurer et récupérer la logique de génération de monde de Hytale.

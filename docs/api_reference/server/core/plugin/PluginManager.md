@@ -1,76 +1,76 @@
 # PluginManager
 
-The `PluginManager` class is responsible for managing the lifecycle of plugins on the Hytale server. It handles loading, starting, stopping, and reloading plugins, as well as managing their dependencies and classloaders. Mod developers will primarily interact with this manager to query information about other plugins or to register their own plugins.
+La classe `PluginManager` est responsable de la gestion du cycle de vie des plugins sur le serveur Hytale. Elle gère le chargement, le démarrage, l'arrêt et le rechargement des plugins, ainsi que leurs dépendances et leurs chargeurs de classes (`classloaders`). Les développeurs de mods interagiront principalement avec ce gestionnaire pour obtenir des informations sur d'autres plugins ou pour enregistrer leurs propres plugins.
 
-## Static Methods
+## Méthodes Statiques
 
 ### `public static PluginManager get()`
-Retrieves the singleton instance of the `PluginManager`. This is the primary way to access plugin management functionality.
-- **Returns:** The singleton `PluginManager` instance.
+Récupère l'instance "singleton" du `PluginManager`. Un "singleton" est une classe dont il n'existe qu'une seule instance dans toute l'application. C'est le moyen principal d'accéder aux fonctionnalités de gestion des plugins.
+- **Retourne :** L'instance unique du `PluginManager`.
 
-## Methods
+## Méthodes
 
 ### `public void registerCorePlugin(@Nonnull PluginManifest builder)`
-Registers a core plugin with the server. Core plugins are typically internal server components packaged as plugins.
-- **Parameters:**
-    - `builder`: The `PluginManifest` of the core plugin to register.
+Enregistre un plugin "core" (faisant partie du cœur du serveur) auprès du serveur. Les plugins "core" sont généralement des composants internes du serveur empaquetés comme des plugins.
+- **Paramètres :**
+    - `builder` : Le `PluginManifest` du plugin "core" à enregistrer.
 
 ### `public void setup()`
-Initializes the plugin manager and prepares it for loading plugins. This method is called internally during server boot.
+Initialise le gestionnaire de plugins et le prépare au chargement des plugins. Cette méthode est appelée en interne pendant le démarrage du serveur. En tant que développeur de mods, vous n'aurez pas besoin de l'appeler directement.
 
 ### `public void start()`
-Starts all loaded plugins. This method is called internally after the server setup is complete.
+Démarre tous les plugins chargés. Cette méthode est appelée en interne une fois que la configuration du serveur est terminée.
 
 ### `public void shutdown()`
-Initiates the shutdown process for all active plugins, allowing them to perform cleanup operations. This method is called internally during server shutdown.
+Lance le processus d'arrêt pour tous les plugins actifs, leur permettant d'effectuer des opérations de nettoyage. Cette méthode est également appelée en interne pendant l'arrêt du serveur.
 
 ### `public PluginState getState()`
-Retrieves the current lifecycle state of the plugin manager.
-- **Returns:** A `PluginState` enum indicating the current state (e.g., NONE, SETUP, START, SHUTDOWN).
+Récupère l'état actuel du cycle de vie du gestionnaire de plugins. Cela peut être utile pour savoir si le gestionnaire est en train de se configurer, de démarrer, etc.
+- **Retourne :** Une énumération `PluginState` indiquant l'état actuel (par exemple, `NONE`, `SETUP`, `START`, `SHUTDOWN`).
 
 ### `public PluginBridgeClassLoader getBridgeClassLoader()`
-Retrieves the `PluginBridgeClassLoader` used for inter-plugin class loading. This is an advanced feature primarily for managing class visibility and isolation between plugins.
-- **Returns:** The `PluginBridgeClassLoader` instance.
+Récupère le `PluginBridgeClassLoader` utilisé pour le chargement de classes entre plugins. Il s'agit d'une fonctionnalité avancée principalement destinée à gérer la visibilité et l'isolation des classes entre différents plugins.
+- **Retourne :** L'instance du `PluginBridgeClassLoader`.
 
 ### `public List<PluginBase> getPlugins()`
-Returns an immutable list of all currently loaded `PluginBase` instances.
-- **Returns:** A `List` of `PluginBase` objects.
+Retourne une liste immuable (qui ne peut pas être modifiée après sa création) de toutes les instances de `PluginBase` actuellement chargées. Cela vous permet de voir quels plugins sont actifs.
+- **Retourne :** Une `List` d'objets `PluginBase`.
 
 ### `public PluginBase getPlugin(PluginIdentifier identifier)`
-Retrieves a specific plugin by its `PluginIdentifier`.
-- **Parameters:**
-    - `identifier`: The unique `PluginIdentifier` of the plugin to retrieve.
-- **Returns:** The `PluginBase` instance if found, otherwise `null`.
+Récupère un plugin spécifique en utilisant son `PluginIdentifier` (son identifiant unique).
+- **Paramètres :**
+    - `identifier` : L'`PluginIdentifier` unique du plugin à récupérer.
+- **Retourne :** L'instance de `PluginBase` si le plugin est trouvé, sinon `null`.
 
 ### `public boolean hasPlugin(PluginIdentifier identifier, @Nonnull SemverRange range)`
-Checks if a plugin with the given `PluginIdentifier` is loaded and its version satisfies the specified `SemverRange`.
-- **Parameters:**
-    - `identifier`: The unique `PluginIdentifier` of the plugin.
-    - `range`: The `SemverRange` to check against the plugin's version.
-- **Returns:** `true` if the plugin is loaded and its version matches the range, `false` otherwise.
+Vérifie si un plugin avec l'`PluginIdentifier` donné est chargé et si sa version satisfait la `SemverRange` spécifiée. C'est utile pour vérifier les dépendances d'un plugin.
+- **Paramètres :**
+    - `identifier` : L'`PluginIdentifier` unique du plugin.
+    - `range` : La `SemverRange` (plage de versions, par exemple ">=1.0.0 <2.0.0") à vérifier par rapport à la version du plugin.
+- **Retourne :** `true` si le plugin est chargé et sa version correspond à la plage, `false` sinon.
 
 ### `public boolean reload(@Nonnull PluginIdentifier identifier)`
-Attempts to unload and then reload a plugin identified by its `PluginIdentifier`.
-- **Parameters:**
-    - `identifier`: The unique `PluginIdentifier` of the plugin to reload.
-- **Returns:** `true` if the plugin was successfully reloaded, `false` otherwise.
+Tente de décharger puis de recharger un plugin identifié par son `PluginIdentifier`. Cela peut être utile pendant le développement pour appliquer des changements sans redémarrer tout le serveur.
+- **Paramètres :**
+    - `identifier` : L'`PluginIdentifier` unique du plugin à recharger.
+- **Retourne :** `true` si le plugin a été rechargé avec succès, `false` sinon.
 
 ### `public boolean unload(@Nonnull PluginIdentifier identifier)`
-Attempts to unload a plugin identified by its `PluginIdentifier`. This will stop and disable the plugin.
-- **Parameters:**
-    - `identifier`: The unique `PluginIdentifier` of the plugin to unload.
-- **Returns:** `true` if the plugin was successfully unloaded, `false` otherwise.
+Tente de décharger un plugin identifié par son `PluginIdentifier`. Cela arrêtera et désactivera le plugin.
+- **Paramètres :**
+    - `identifier` : L'`PluginIdentifier` unique du plugin à décharger.
+- **Retourne :** `true` si le plugin a été déchargé avec succès, `false` sinon.
 
 ### `public boolean load(@Nonnull PluginIdentifier identifier)`
-Attempts to load and enable a plugin identified by its `PluginIdentifier`.
-- **Parameters:**
-    - `identifier`: The unique `PluginIdentifier` of the plugin to load.
-- **Returns:** `true` if the plugin was successfully loaded, `false` otherwise.
+Tente de charger et d'activer un plugin identifié par son `PluginIdentifier`.
+- **Paramètres :**
+    - `identifier` : L'`PluginIdentifier` unique du plugin à charger.
+- **Retourne :** `true` si le plugin a été chargé avec succès, `false` sinon.
 
 ### `public Map<PluginIdentifier, PluginManifest> getAvailablePlugins()`
-Returns a map of all plugins that are available to be loaded, including both loaded and unloaded plugins.
-- **Returns:** A `Map` where keys are `PluginIdentifier`s and values are `PluginManifest`s.
+Retourne une carte (`Map`) de tous les plugins disponibles qui peuvent être chargés, incluant à la fois les plugins déjà chargés et ceux qui ne le sont pas encore.
+- **Retourne :** Une `Map` où les clés sont des `PluginIdentifier` et les valeurs sont des `PluginManifest`s.
 
 ### `public ComponentType<EntityStore, PluginListPageManager.SessionSettings> getSessionSettingsComponentType()`
-Retrieves the `ComponentType` for session-specific settings managed by the `PluginListPageManager`. This is likely an internal component for managing UI-related settings for plugin listings.
-- **Returns:** The `ComponentType` instance.
+Récupère le `ComponentType` pour les paramètres spécifiques à la session gérés par le `PluginListPageManager`. Il s'agit probablement d'un composant interne pour gérer les paramètres liés à l'interface utilisateur pour les listes de plugins. En tant que développeur de mods, vous n'aurez probablement pas besoin d'interagir directement avec cela.
+- **Retourne :** L'instance de `ComponentType`.

@@ -18,43 +18,43 @@ Si vous souhaitez utiliser ce projet comme référence pour l'écriture de code 
 
 ## 📚 Référence API
 
-* **Général**
-    * [Authentication](api_reference/general/authentication.md)
-    * [HytaleServer](api_reference/general/hytaleserver.md)
-    * [Logging](api_reference/general/logging.md)
-    * [Permissions](api_reference/general/permissions.md)
-    * [Universe](api_reference/general/universe.md)
-    * [API Core du Serveur Hytale (EN)](api_reference/server_core_api/HYTALE_CORE_API.md)
-    * [API Core du Serveur Hytale (TR)](api_reference/server_core_api/HYTALE_CORE_API_TR.md)
-*   **Serveur Core**
-    *   [HytaleServer](./api_reference/server/core/HytaleServer.md)
-*   **Plugins Core**
-    *   [PluginManager](./api_reference/server/core/plugin/PluginManager.md)
-    *   [PluginBase](./api_reference/server/core/plugin/PluginBase.md)
-    *   [JavaPlugin](./api_reference/server/core/plugin/JavaPlugin.md)
-*   **Commandes Système**
-    *   [CommandManager](./api_reference/server/core/command/system/CommandManager.md)
-*   **Événements**
-    *   [EventBus](./api_reference/event/EventBus.md)
-* **Commandes**
-    * [ArgTypes](api_reference/command/ArgTypes.md)
-    * [RequiredArg](api_reference/command/RequiredArg.md)
-* **Entités (Player & PlayerRef)**
-    * [Référence API Entités](./api_reference/entity/README.md)
-* **Événements**
-    * [Listeners](api_reference/event/listeners.md)
-* **Interface Utilisateur (UI)**
-    * [Custom UI (GUI)](api_reference/ui/custom_ui.md)
-    * [Messages Formatés](api_reference/ui/message.md)
-    * [Titres à l'écran](api_reference/ui/titles.md)
-* **Monde**
-    * [World](api_reference/world/world.md)
-    * [WorldConfig](api_reference/world/world_config.md)
-    * [WorldMapTracker](api_reference/world/world_map_tracker.md)
-* **Utilitaires**
-    * [NameMatching](api_reference/util/name_matching.md)
-    * [ValidateUtil](api_reference/util/validate_util.md)
-    * [WildcardMatch](api_reference/util/wildcard_match.md)
+Cette section fournit la documentation technique des différentes APIs disponibles pour le développement de mods Hytale.
+
+*   **API du Cœur du Serveur**
+    *   [Présentation Générale](./api_reference/server/core/README.md)
+*   **API des Plugins du Cœur du Serveur**
+    *   [Présentation Générale](./api_reference/server/core/plugin/README.md)
+*   **API du Système de Commandes du Cœur du Serveur**
+    *   [Présentation Générale](./api_reference/server/core/command/system/README.md)
+*   **API du Système d'Événements**
+    *   [Présentation Générale](./api_reference/event/README.md)
+*   **Général**
+    *   [Authentification](api_reference/general/authentication.md)
+    *   [HytaleServer (Déprécié - Voir "API du Cœur du Serveur")](api_reference/general/hytaleserver.md)
+    *   [Journalisation (Logging)](api_reference/general/logging.md)
+    *   [Permissions](api_reference/general/permissions.md)
+    *   [Univers (Déprécié - Voir "API du Cœur du Serveur")](api_reference/general/universe.md)
+    *   [API Core du Serveur Hytale (EN)](api_reference/server_core_api/HYTALE_CORE_API.md)
+    *   [API Core du Serveur Hytale (TR)](api_reference/server_core_api/HYTALE_CORE_API_TR.md)
+*   **Commandes (Général)**
+    *   [Types d'Arguments](api_reference/command/ArgTypes.md)
+    *   [Argument Requis](api_reference/command/RequiredArg.md)
+*   **Entités (Joueur & PlayerRef)**
+    *   [Présentation Générale des Entités](./api_reference/entity/README.md)
+*   **Événements (Général)**
+    *   [Écouteurs d'Événements](api_reference/event/listeners.md)
+*   **Interface Utilisateur (UI)**
+    *   [Interface Utilisateur Personnalisée (GUI)](api_reference/ui/custom_ui.md)
+    *   [Messages Formatés](api_reference/ui/message.md)
+    *   [Titres à l'Écran](api_reference/ui/titles.md)
+*   **Monde**
+    *   [Monde (World)](api_reference/world/world.md)
+    *   [Configuration du Monde](api_reference/world/world_config.md)
+    *   [Suivi de la Carte du Monde](api_reference/world/world_map_tracker.md)
+*   **Utilitaires**
+    *   [Correspondance de Noms](api_reference/util/name_matching.md)
+    *   [Utilitaire de Validation](api_reference/util/validate_util.md)
+    *   [Correspondance par Caractères Génériques (WildcardMatch)](api_reference/util/wildcard_match.md)
 
 ## 👻 Mécanismes Internes (Avancé)
 

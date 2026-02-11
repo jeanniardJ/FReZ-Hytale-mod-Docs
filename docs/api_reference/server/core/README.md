@@ -1,15 +1,15 @@
-# Server Core API Reference
+# Référence API du Cœur du Serveur
 
-This section provides detailed API documentation for the core components of the Hytale server. These classes and packages are essential for understanding the server's fundamental operations and how to extend them.
+Cette section fournit une documentation API détaillée pour les composants centraux du serveur Hytale. Ces classes et packages sont essentiels pour comprendre les opérations fondamentales du serveur et comment les étendre.
 
 ## Classes
 
--   [`HytaleServer`](./HytaleServer.md): The main entry point and orchestrator for the Hytale server.
+-   [`HytaleServer`](./HytaleServer.md) : Le point d'entrée principal et l'orchestrateur du serveur Hytale.
 
 ## Packages
 
--   [`Command System`](./command/system/README.md): Documentation for the server's command management system.
--   [`Plugin System`](./plugin/README.md): Documentation for managing plugins and their lifecycle.
--   [`Entity System`](./entity/README.md): Documentation for the server's entity management system.
--   [`World Generation System`](../../server/worldgen/README.md): Documentation for the server's world generation system.
--   [`Universe System`](./universe/README.md): Documentation for the server's global game state and world management.
+-   [`Système de Commandes`](./command/system/README.md) : Documentation pour le système de gestion des commandes du serveur.
+-   [`Système de Plugins`](./plugin/README.md) : Documentation pour la gestion des plugins et de leur cycle de vie.
+-   [`Système d'Entités`](./entity/README.md) : Documentation pour le système de gestion des entités du serveur.
+-   [`Système de Génération de Monde`](../../server/worldgen/README.md) : Documentation pour le système de génération de monde du serveur. Notez que ce lien remonte de deux niveaux car le package de génération de monde est directement sous "server", pas "server/core".
+-   [`Système d'Univers`](./universe/README.md) : Documentation pour la gestion de l'état global du jeu et des mondes du serveur.

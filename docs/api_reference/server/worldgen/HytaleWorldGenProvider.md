@@ -1,22 +1,22 @@
 # HytaleWorldGenProvider
 
-The `HytaleWorldGenProvider` class serves as the default implementation for `IWorldGenProvider`, offering a standardized way to configure and retrieve Hytale's world generation logic. Mod developers interested in customizing or understanding how world generation is initiated will find this class relevant.
+La classe `HytaleWorldGenProvider` sert d'implémentation par défaut pour `IWorldGenProvider`. Elle offre un moyen standardisé de configurer et de récupérer la logique de génération de monde de Hytale. Les développeurs de mods intéressés par la personnalisation ou la compréhension du fonctionnement de la génération de monde trouveront cette classe pertinente.
 
-## Constants
+## Constantes
 
 ### `public static final String ID = "Hytale"`
-The unique identifier for this specific world generation provider.
+L'identifiant unique pour ce fournisseur spécifique de génération de monde.
 
 ### `public static final BuilderCodec<HytaleWorldGenProvider> CODEC`
-A `BuilderCodec` instance responsible for serializing and deserializing `HytaleWorldGenProvider` configurations. This allows the provider's settings (like generator name and path) to be loaded from or saved to a persistent format.
+Une instance de `BuilderCodec` responsable de la sérialisation (sauvegarde) et de la désérialisation (chargement) des configurations de `HytaleWorldGenProvider`. Cela permet de charger ou de sauvegarder les paramètres du fournisseur (comme le nom du générateur et le chemin) dans un format persistant.
 
-## Methods
+## Méthodes
 
 ### `public IWorldGen getGenerator() throws WorldGenLoadException`
-This is the core method of the provider. It constructs and returns an instance of `IWorldGen`, which is the actual world generation engine configured by this provider. The generator's behavior is determined by the `name` and `path` properties set on this `HytaleWorldGenProvider` instance.
-- **Returns:** An `IWorldGen` instance ready to generate world chunks.
-- **Throws:** `WorldGenLoadException` if there is an issue loading the world generation configuration or the generator itself.
+C'est la méthode principale du fournisseur. Elle construit et retourne une instance de `IWorldGen`, qui est le véritable moteur de génération de monde configuré par ce fournisseur. Le comportement du générateur est déterminé par les propriétés `name` et `path` définies sur cette instance de `HytaleWorldGenProvider`.
+- **Retourne :** Une instance d'`IWorldGen` prête à générer des "chunks" (morceaux de monde).
+- **Lance :** `WorldGenLoadException` s'il y a un problème lors du chargement de la configuration de génération de monde ou du générateur lui-même.
 
 ### `public String toString()`
-Returns a string representation of this `HytaleWorldGenProvider` instance, including its configured name and path.
-- **Returns:** A `String` detailing the provider's current state.
+Retourne une représentation sous forme de chaîne de caractères (`String`) de cette instance de `HytaleWorldGenProvider`, incluant son nom et son chemin configurés.
+- **Retourne :** Une `String` détaillant l'état actuel du fournisseur.

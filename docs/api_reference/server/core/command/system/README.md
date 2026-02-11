@@ -1,7 +1,7 @@
-# Server Core Command System API Reference
+# Référence API du Système de Commandes du Cœur du Serveur
 
-This section provides detailed API documentation for the core command system of the Hytale server. Mod developers can use these classes to define, register, and manage custom commands that extend the server's interactive capabilities.
+Cette section fournit une documentation API détaillée pour le système de commandes central du serveur Hytale. Les développeurs de mods peuvent utiliser ces classes pour définir, enregistrer et gérer des commandes personnalisées qui étendent les capacités interactives du serveur.
 
 ## Classes
 
--   [`CommandManager`](./CommandManager.md): The central class for managing and dispatching commands, including registration and execution.
+-   [`CommandManager`](./CommandManager.md) : La classe centrale pour gérer et exécuter les commandes, y compris leur enregistrement et leur exécution.

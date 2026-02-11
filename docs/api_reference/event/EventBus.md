@@ -1,88 +1,88 @@
 # EventBus
 
-The `EventBus` is a central component of the Hytale server's event system, facilitating communication between different parts of the server and its plugins. It allows plugins to register listeners for specific events and to dispatch events, enabling a highly decoupled and extensible architecture.
+L'`EventBus` est un composant central du système d'événements du serveur Hytale. Il facilite la communication entre les différentes parties du serveur et ses plugins. Il permet aux plugins d'enregistrer des "écouteurs" (`listeners`) pour des événements spécifiques et d'envoyer (`dispatch`) des événements, ce qui rend l'architecture du moddage très découplée et extensible.
 
-Mod developers will typically interact with the `EventBus` to:
--   **Register Listeners:** Subscribe to events they are interested in.
--   **Dispatch Events:** Fire their own custom events to notify other parts of the server or other plugins.
+Les développeurs de mods interagiront généralement avec l'`EventBus` pour :
+- **Enregistrer des Écouteurs (`Listeners`)** : S'abonner aux événements qui les intéressent.
+- **Envoyer des Événements (`Dispatch Events`)** : Déclencher leurs propres événements personnalisés pour notifier d'autres parties du serveur ou d'autres plugins.
 
-## Constructor
+## Constructeur
 
 ### `public EventBus(boolean timeEvents)`
-Initializes a new `EventBus` instance. While mod developers usually obtain the `EventBus` instance from `HytaleServer.get().getEventBus()`, understanding this constructor clarifies its basic setup.
-- **Parameters:**
-    - `timeEvents`: A boolean indicating whether event timing should be enabled for performance monitoring.
+Initialise une nouvelle instance de l'`EventBus`. Bien que les développeurs de mods obtiennent généralement l'instance de l'`EventBus` via `HytaleServer.get().getEventBus()`, comprendre ce constructeur clarifie sa configuration de base.
+- **Paramètres :**
+    - `timeEvents` : Un booléen indiquant si la mesure du temps d'exécution des événements doit être activée pour la surveillance des performances.
 
-## Methods
+## Méthodes
 
 ### `public void shutdown()`
-Shuts down the `EventBus` and unregisters all its listeners and registries. This method is called internally during server shutdown.
+Arrête l'`EventBus` et désenregistre tous ses écouteurs et registres. Cette méthode est appelée en interne pendant l'arrêt du serveur.
 
 ### `public Set<Class<? extends IBaseEvent<?>>> getRegisteredEventClasses()`
-Retrieves a set of all event classes for which at least one listener or dispatcher has been registered.
-- **Returns:** A `Set` of `Class` objects representing the registered event types.
+Récupère un ensemble de toutes les classes d'événements pour lesquelles au moins un écouteur ou un "dispatcher" a été enregistré.
+- **Retourne :** Un `Set` d'objets `Class` représentant les types d'événements enregistrés.
 
 ### `public Set<String> getRegisteredEventClassNames()`
-Retrieves a set of simple class names (e.g., "PlayerJoinEvent" instead of "com.hypixel.hytale.event.player.PlayerJoinEvent") for all event classes that have registered listeners.
-- **Returns:** A `Set` of `String` objects representing the simple names of registered event types.
+Récupère un ensemble de noms de classes simples (par exemple, "PlayerJoinEvent" au lieu de "com.hypixel.hytale.event.player.PlayerJoinEvent") pour toutes les classes d'événements qui ont enregistré des écouteurs.
+- **Retourne :** Un `Set` d'objets `String` représentant les noms simples des types d'événements enregistrés.
 
 ### `public <KeyType, EventType extends IBaseEvent<KeyType>> EventBusRegistry<KeyType, EventType, ?> getRegistry(@Nonnull Class<? super EventType> eventClass)`
-The primary method for obtaining an `EventBusRegistry` for a specific event type. This registry then allows for fine-grained control over event listener registration and dispatching.
-- **Parameters:**
-    - `eventClass`: The `Class` object of the event type for which to get the registry.
-- **Returns:** An `EventBusRegistry` instance specific to the provided `eventClass`.
+La méthode principale pour obtenir un `EventBusRegistry` pour un type d'événement spécifique. Ce registre permet ensuite un contrôle précis sur l'enregistrement des écouteurs d'événements et leur envoi.
+- **Paramètres :**
+    - `eventClass` : L'objet `Class` du type d'événement pour lequel obtenir le registre.
+- **Retourne :** Une instance d'`EventBusRegistry` spécifique à la `eventClass` fournie.
 
 ### `public <EventType extends IBaseEvent<Void>> EventRegistration<Void, EventType> register(@Nonnull Class<? super EventType> eventClass, @Nonnull Consumer<EventType> consumer)`
-Registers a synchronous event listener that will be invoked whenever an event of the specified `eventClass` is dispatched. This overload is for events that do not use a `KeyType` (i.e., `Void`).
-- **Parameters:**
-    - `eventClass`: The `Class` of the event to listen for.
-    - `consumer`: A `Consumer` functional interface that will be executed when the event is dispatched.
-- **Returns:** An `EventRegistration` object, which can be used to unregister the listener.
+Enregistre un écouteur d'événements synchrone qui sera appelé chaque fois qu'un événement du type `eventClass` spécifié est envoyé. Cette surcharge est pour les événements qui n'utilisent pas de `KeyType` (c'est-à-dire `Void`).
+- **Paramètres :**
+    - `eventClass` : La `Class` de l'événement à écouter.
+    - `consumer` : Une interface fonctionnelle `Consumer` qui sera exécutée lorsque l'événement est envoyé.
+- **Retourne :** Un objet `EventRegistration`, qui peut être utilisé pour désenregistrer l'écouteur.
 
 ### `public <KeyType, EventType extends IBaseEvent<KeyType>> EventRegistration<KeyType, EventType> register(@Nonnull EventPriority priority, @Nonnull Class<? super EventType> eventClass, @Nullable KeyType key, @Nonnull Consumer<EventType> consumer)`
-Registers a synchronous event listener with a specified priority and an optional key. The key allows for filtering events, ensuring the listener only receives events dispatched with a matching key.
-- **Parameters:**
-    - `priority`: The `EventPriority` (e.g., `HIGHEST`, `NORMAL`, `LOWEST`) determining the order of listener invocation.
-    - `eventClass`: The `Class` of the event to listen for.
-    - `key`: An optional `KeyType` object to filter events. If `null`, the listener will receive all events of the given `eventClass`.
-    - `consumer`: A `Consumer` functional interface that will be executed when the event is dispatched.
-- **Returns:** An `EventRegistration` object.
+Enregistre un écouteur d'événements synchrone avec une priorité spécifiée et une clé optionnelle. La clé permet de filtrer les événements, garantissant que l'écouteur ne reçoit que les événements envoyés avec une clé correspondante.
+- **Paramètres :**
+    - `priority` : L'`EventPriority` (par exemple, `HIGHEST`, `NORMAL`, `LOWEST`) déterminant l'ordre d'invocation des écouteurs.
+    - `eventClass` : La `Class` de l'événement à écouter.
+    - `key` : Un objet `KeyType` optionnel pour filtrer les événements. Si `null`, l'écouteur recevra tous les événements de la `eventClass` donnée.
+    - `consumer` : Une interface fonctionnelle `Consumer` qui sera exécutée lorsque l'événement est envoyé.
+- **Retourne :** Un objet `EventRegistration`.
 
 ### `public <KeyType, EventType extends IAsyncEvent<KeyType>> EventRegistration<KeyType, EventType> registerAsync(@Nonnull EventPriority priority, @Nonnull Class<? super EventType> eventClass, @Nullable KeyType key, @Nonnull Function<CompletableFuture<EventType>, CompletableFuture<EventType>> function)`
-Registers an asynchronous event listener with a specified priority and an optional key. Asynchronous listeners receive a `CompletableFuture` of the event and should return a modified `CompletableFuture`.
-- **Parameters:**
-    - `priority`: The `EventPriority` determining the order of listener invocation.
-    - `eventClass`: The `Class` of the asynchronous event to listen for.
-    - `key`: An optional `KeyType` object to filter events.
-    - `function`: A `Function` that takes a `CompletableFuture<EventType>` and returns a `CompletableFuture<EventType>`, allowing for asynchronous event processing and modification.
-- **Returns:** An `EventRegistration` object.
+Enregistre un écouteur d'événements asynchrone avec une priorité spécifiée et une clé optionnelle. Les écouteurs asynchrones reçoivent un `CompletableFuture` de l'événement et doivent retourner un `CompletableFuture` modifié. Cela permet de traiter les événements sans bloquer le thread principal.
+- **Paramètres :**
+    - `priority` : L'`EventPriority` déterminant l'ordre d'invocation des écouteurs.
+    - `eventClass` : La `Class` de l'événement asynchrone à écouter.
+    - `key` : Un objet `KeyType` optionnel pour filtrer les événements.
+    - `function` : Une fonction (`Function`) qui prend un `CompletableFuture<EventType>` et retourne un `CompletableFuture<EventType>`, permettant un traitement et une modification asynchrones de l'événement.
+- **Retourne :** Un objet `EventRegistration`.
 
 ### `public <KeyType, EventType extends IBaseEvent<KeyType>> EventRegistration<KeyType, EventType> registerGlobal(@Nonnull EventPriority priority, @Nonnull Class<? super EventType> eventClass, @Nonnull Consumer<EventType> consumer)`
-Registers a global synchronous event listener. This listener will be invoked for all events of the specified `eventClass`, regardless of any specific keys they might have.
-- **Parameters:**
-    - `priority`: The `EventPriority` for this listener.
-    - `eventClass`: The `Class` of the event to listen for.
-    - `consumer`: A `Consumer` functional interface to handle the event.
-- **Returns:** An `EventRegistration` object.
+Enregistre un écouteur d'événements synchrone global. Cet écouteur sera appelé pour tous les événements du type `eventClass` spécifié, indépendamment de toute clé spécifique qu'ils pourraient avoir.
+- **Paramètres :**
+    - `priority` : L'`EventPriority` pour cet écouteur.
+    - `eventClass` : La `Class` de l'événement à écouter.
+    - `consumer` : Une interface fonctionnelle `Consumer` pour gérer l'événement.
+- **Retourne :** Un objet `EventRegistration`.
 
 ### `public <KeyType, EventType extends IAsyncEvent<KeyType>> EventRegistration<KeyType, EventType> registerAsyncGlobal(@Nonnull EventPriority priority, @Nonnull Class<? super EventType> eventClass, @Nonnull Function<CompletableFuture<EventType>, CompletableFuture<EventType>> function)`
-Registers a global asynchronous event listener.
-- **Parameters:**
-    - `priority`: The `EventPriority` for this listener.
-    - `eventClass`: The `Class` of the asynchronous event to listen for globally.
-    - `function`: The `Function` to handle the asynchronous event.
-- **Returns:** An `EventRegistration` object.
+Enregistre un écouteur d'événements asynchrone global.
+- **Paramètres :**
+    - `priority` : L'`EventPriority` pour cet écouteur.
+    - `eventClass` : La `Class` de l'événement asynchrone à écouter globalement.
+    - `function` : La `Function` pour gérer l'événement asynchrone.
+- **Retourne :** Un objet `EventRegistration`.
 
 ### `public <KeyType, EventType extends IEvent<KeyType>> IEventDispatcher<EventType, EventType> dispatchFor(@Nonnull Class<? super EventType> eventClass, KeyType key)`
-Retrieves an `IEventDispatcher` for dispatching synchronous events of a specific `eventClass` and `key`. The dispatcher allows for firing events that will then be processed by registered listeners.
-- **Parameters:**
-    - `eventClass`: The `Class` of the event to dispatch.
-    - `key`: The `KeyType` associated with the event.
-- **Returns:** An `IEventDispatcher` instance.
+Récupère un `IEventDispatcher` pour envoyer des événements synchrones d'une `eventClass` et d'une `key` spécifiques. Le "dispatcher" permet de déclencher des événements qui seront ensuite traités par les écouteurs enregistrés.
+- **Paramètres :**
+    - `eventClass` : La `Class` de l'événement à envoyer.
+    - `key` : La `KeyType` associée à l'événement.
+- **Retourne :** Une instance de `IEventDispatcher`.
 
 ### `public <KeyType, EventType extends IAsyncEvent<KeyType>> IEventDispatcher<EventType, CompletableFuture<EventType>> dispatchForAsync(@Nonnull Class<? super EventType> eventClass, KeyType key)`
-Retrieves an `IEventDispatcher` for dispatching asynchronous events of a specific `eventClass` and `key`.
-- **Parameters:**
-    - `eventClass`: The `Class` of the asynchronous event to dispatch.
-    - `key`: The `KeyType` associated with the event.
-- **Returns:** An `IEventDispatcher` instance for asynchronous events.
+Récupère un `IEventDispatcher` pour envoyer des événements asynchrones d'une `eventClass` et d'une `key` spécifiques.
+- **Paramètres :**
+    - `eventClass` : La `Class` de l'événement asynchrone à envoyer.
+    - `key` : La `KeyType` associée à l'événement.
+- **Retourne :** Une instance de `IEventDispatcher` pour les événements asynchrones.

@@ -1,112 +1,112 @@
-# PlayerRef
+# PlayerRef (Référence de Joueur)
 
-The `PlayerRef` class represents a lightweight, persistent reference to a connected player within the Hytale `Universe`. It acts as a bridge between the player's network connection and their in-game entity data, which is stored in an `EntityStore` as components. Mod developers will use `PlayerRef` to interact with players, send them messages, manage their connection, and access their associated entity components.
+La classe `PlayerRef` représente une référence légère et persistante à un joueur connecté au sein de l'`Universe` (l'univers) de Hytale. Elle agit comme un pont entre la connexion réseau du joueur et ses données d'entité en jeu, qui sont stockées dans un `EntityStore` sous forme de "composants" (`Component`). Les développeurs de mods utiliseront `PlayerRef` pour interagir avec les joueurs, leur envoyer des messages, gérer leur connexion et accéder à leurs composants d'entité associés.
 
-## Static Methods
+## Méthodes Statiques
 
 ### `public static ComponentType<EntityStore, PlayerRef> getComponentType()`
-Retrieves the `ComponentType` specifically associated with `PlayerRef` components. This is essential for accessing or manipulating `PlayerRef` instances within an `EntityStore`.
-- **Returns:** The `ComponentType` for `PlayerRef`.
+Récupère le `ComponentType` spécifiquement associé aux composants `PlayerRef`. C'est essentiel pour accéder ou manipuler les instances de `PlayerRef` au sein d'un `EntityStore`.
+- **Retourne :** Le `ComponentType` pour `PlayerRef`.
 
-## Constructor
+## Constructeur
 
 ### `public PlayerRef(@Nonnull Holder<EntityStore> holder, @Nonnull UUID uuid, @Nonnull String username, @Nonnull String language, @Nonnull PacketHandler packetHandler, @Nonnull ChunkTracker chunkTracker)`
-Initializes a new `PlayerRef` instance. This constructor is primarily used internally by the server during player connection and loading.
-- **Parameters:**
-    - `holder`: The `Holder` containing the player's initial entity components.
-    - `uuid`: The unique identifier (`UUID`) of the player.
-    - `username`: The player's username.
-    - `language`: The player's preferred language.
-    - `packetHandler`: The `PacketHandler` responsible for network communication with this player.
-    - `chunkTracker`: The `ChunkTracker` instance managing the chunks the player is viewing.
+Initialise une nouvelle instance de `PlayerRef`. Ce constructeur est principalement utilisé en interne par le serveur lors de la connexion et du chargement du joueur. Vous n'aurez pas à l'appeler directement.
+- **Paramètres :**
+    - `holder` : Le `Holder` (un conteneur) contenant les composants d'entité initiaux du joueur.
+    - `uuid` : L'identifiant unique (`UUID`) du joueur.
+    - `username` : Le nom d'utilisateur du joueur.
+    - `language` : La langue préférée du joueur.
+    - `packetHandler` : Le `PacketHandler` (gestionnaire de paquets) responsable de la communication réseau avec ce joueur.
+    - `chunkTracker` : L'instance de `ChunkTracker` qui gère les "chunks" (morceaux de monde) que le joueur est en train de visualiser.
 
-## Methods
+## Méthodes
 
 ### `public boolean isValid()`
-Checks if this `PlayerRef` is currently valid, meaning it is associated with an active player entity either as a `Holder` or a `Ref<EntityStore>`.
-- **Returns:** `true` if valid, `false` otherwise.
+Vérifie si cette `PlayerRef` est actuellement valide, c'est-à-dire si elle est associée à une entité joueur active, soit en tant que `Holder`, soit en tant que `Ref<EntityStore>`.
+- **Retourne :** `true` si valide, `false` sinon.
 
 ### `public Ref<EntityStore> getReference()`
-Retrieves the `Ref<EntityStore>` that points to the player's actual entity data within the `EntityStore` once the player entity is loaded into a world.
-- **Returns:** The `Ref<EntityStore>` for this player, or `null` if the player entity is not yet fully in a world.
+Récupère la `Ref<EntityStore>` qui pointe vers les données d'entité réelles du joueur dans l'`EntityStore` une fois que l'entité joueur est chargée dans un monde.
+- **Retourne :** La `Ref<EntityStore>` pour ce joueur, ou `null` si l'entité joueur n'est pas encore entièrement dans un monde.
 
 ### `public Holder<EntityStore> getHolder()`
-Retrieves the `Holder<EntityStore>` that temporarily holds the player's entity components before they are fully added to an `EntityStore`. This is typically used during the player loading process.
-- **Returns:** The `Holder<EntityStore>` for this player, or `null` if the player's entity is already in an `EntityStore`.
+Récupère le `Holder<EntityStore>` qui détient temporairement les composants d'entité du joueur avant qu'ils ne soient entièrement ajoutés à un `EntityStore`. Ceci est généralement utilisé pendant le processus de chargement du joueur.
+- **Retourne :** Le `Holder<EntityStore>` pour ce joueur, ou `null` si l'entité du joueur est déjà dans un `EntityStore`.
 
 ### `public UUID getUuid()`
-Returns the unique identifier (`UUID`) of the player. This `UUID` is persistent across sessions.
-- **Returns:** The player's `UUID`.
+Retourne l'identifiant unique (`UUID`) du joueur. Cet `UUID` est persistant d'une session à l'autre et identifie le joueur de manière fiable.
+- **Retourne :** L'`UUID` du joueur.
 
 ### `public String getUsername()`
-Returns the current username of the player.
-- **Returns:** The player's username as a `String`.
+Retourne le nom d'utilisateur actuel du joueur.
+- **Retourne :** Le nom d'utilisateur du joueur sous forme de `String`.
 
 ### `public PacketHandler getPacketHandler()`
-Retrieves the `PacketHandler` associated with this player's network connection. Mod developers can use this to send custom packets directly to the player's client.
-- **Returns:** The `PacketHandler` instance for this player.
+Récupère le `PacketHandler` associé à la connexion réseau de ce joueur. Les développeurs de mods peuvent l'utiliser pour envoyer des paquets personnalisés directement au client du joueur. C'est le moyen de communiquer directement avec le jeu du joueur.
+- **Retourne :** L'instance de `PacketHandler` pour ce joueur.
 
 ### `public ChunkTracker getChunkTracker()`
-Retrieves the `ChunkTracker` instance for this player. The `ChunkTracker` manages which world chunks the player is currently viewing or has loaded.
-- **Returns:** The `ChunkTracker` for this player.
+Récupère l'instance de `ChunkTracker` pour ce joueur. Le `ChunkTracker` gère les "chunks" (morceaux de monde) que le joueur est en train de visualiser ou qu'il a chargés, ce qui est crucial pour le rendu et la logique du jeu autour du joueur.
+- **Retourne :** Le `ChunkTracker` pour ce joueur.
 
 ### `public HiddenPlayersManager getHiddenPlayersManager()`
-Retrieves the `HiddenPlayersManager` for this player. This manager controls which other players are hidden from this specific player's view.
-- **Returns:** The `HiddenPlayersManager` instance.
+Récupère le `HiddenPlayersManager` pour ce joueur. Ce gestionnaire contrôle quels autres joueurs sont cachés de la vue de ce joueur spécifique (par exemple, pour la furtivité ou des événements spéciaux).
+- **Retourne :** L'instance de `HiddenPlayersManager`.
 
 ### `public String getLanguage()`
-Returns the player's currently set language preference (e.g., "en_US", "fr_FR").
-- **Returns:** The language code as a `String`.
+Retourne la préférence linguistique actuellement définie du joueur (par exemple, "en_US", "fr_FR").
+- **Retourne :** Le code de langue sous forme de `String`.
 
 ### `public void setLanguage(@Nonnull String language)`
-Sets the player's language preference.
-- **Parameters:**
-    - `language`: The new language code (e.g., "en_US").
+Définit la préférence linguistique du joueur.
+- **Paramètres :**
+    - `language` : Le nouveau code de langue (par exemple, "en_US").
 
 ### `public Transform getTransform()`
-Returns a `Transform` object representing the player's current position, rotation, and scale in the game world. This object is mutable.
-- **Returns:** The player's `Transform`.
+Retourne un objet `Transform` représentant la position, la rotation et l'échelle actuelles du joueur dans le monde du jeu. Cet objet est mutable, ce qui signifie que vous pouvez modifier ses valeurs.
+- **Retourne :** Le `Transform` du joueur.
 
 ### `public UUID getWorldUuid()`
-Retrieves the `UUID` of the `World` the player is currently located in.
-- **Returns:** The `UUID` of the player's world, or `null` if the player is not yet fully in a world.
+Récupère l'`UUID` du `World` (monde) dans lequel le joueur est actuellement situé.
+- **Retourne :** L'`UUID` du monde du joueur, ou `null` si le joueur n'est pas encore entièrement dans un monde.
 
 ### `public Vector3f getHeadRotation()`
-Returns a `Vector3f` representing the player's head rotation (pitch, yaw, roll).
-- **Returns:** The player's `Vector3f` head rotation.
+Retourne un `Vector3f` représentant la rotation de la tête du joueur (tangage, lacet, roulis).
+- **Retourne :** La rotation de la tête du joueur (`Vector3f`).
 
 ### `public void updatePosition(@Nonnull World world, @Nonnull Transform transform, @Nonnull Vector3f headRotation)`
-Updates the player's current `World` association, position, and head rotation. This method is typically called by the server's movement system.
-- **Parameters:**
-    - `world`: The `World` the player is now in.
-    - `transform`: The new `Transform` (position and rotation).
-    - `headRotation`: The new `Vector3f` head rotation.
+Met à jour l'association du `World` (monde), la position et la rotation de la tête du joueur. Cette méthode est généralement appelée par le système de mouvement du serveur.
+- **Paramètres :**
+    - `world` : Le `World` dans lequel le joueur se trouve maintenant.
+    - `transform` : La nouvelle `Transform` (position et rotation).
+    - `headRotation` : La nouvelle rotation de la tête (`Vector3f`).
 
 ### `public void referToServer(@Nonnull String host, int port)`
-Instructs the player's client to connect to another server at the specified host and port.
-- **Parameters:**
-    - `host`: The hostname or IP address of the target server.
-    - `port`: The port of the target server.
+Demande au client du joueur de se connecter à un autre serveur à l'hôte et au port spécifiés. Cela permet de transférer les joueurs entre différents serveurs ou instances du jeu.
+- **Paramètres :**
+    - `host` : Le nom d'hôte ou l'adresse IP du serveur cible.
+    - `port` : Le port du serveur cible.
 
 ### `public void referToServer(@Nonnull String host, int port, @Nullable byte[] data)`
-Instructs the player's client to connect to another server, optionally sending additional byte data. This can be used for passing session tokens or other relevant information to the new server.
-- **Parameters:**
-    - `host`: The hostname or IP address of the target server.
-    - `port`: The port of the target server.
-    - `data`: An optional byte array containing additional referral data (maximum 4096 bytes).
+Demande au client du joueur de se connecter à un autre serveur, en envoyant éventuellement des données supplémentaires sous forme de tableau d'octets. Cela peut être utilisé pour transmettre des jetons de session ou d'autres informations pertinentes au nouveau serveur.
+- **Paramètres :**
+    - `host` : Le nom d'hôte ou l'adresse IP du serveur cible.
+    - `port` : Le port du serveur cible.
+    - `data` : Un tableau d'octets optionnel contenant des données de référence supplémentaires (taille maximale de 4096 octets).
 
 ### `public void sendMessage(@Nonnull Message message)`
-Sends a formatted `Message` object to this specific player. The message will be displayed in the player's chat.
-- **Parameters:**
-    - `message`: The `Message` object to send.
+Envoie un objet `Message` formaté à ce joueur spécifique. Le message sera affiché dans le chat du joueur.
+- **Paramètres :**
+    - `message` : L'objet `Message` à envoyer.
 
-## Deprecated Methods
+## Méthodes Dépréciées
 
 ### `public <T extends Component<EntityStore>> T getComponent(@Nonnull ComponentType<EntityStore, T> componentType)`
-*Deprecated.* Retrieves a component from the player's entity holder or store. It's generally recommended to access components directly via the player's `Entity` instance (if available) or by using the `EntityStore` API.
+*Déprécié.* Récupère un composant du "holder" d'entité ou du "store" du joueur. Il est généralement recommandé d'accéder aux composants directement via l'instance d'`Entity` du joueur (si disponible) ou en utilisant l'API `EntityStore` pour une approche plus moderne et basée sur les composants.
 
 ### `public void replaceHolder(@Nonnull Holder<EntityStore> holder)`
-*Deprecated.* Replaces the internal `Holder` for this `PlayerRef`. This is an internal method likely used during complex player state transitions.
+*Déprécié.* Remplace le `Holder` interne pour cette `PlayerRef`. Il s'agit d'une méthode interne probablement utilisée lors de transitions complexes de l'état du joueur.
 
 ### `public Component<EntityStore> clone()`
-*Note: This method returns `this`.* `PlayerRef` instances are essentially references and are not designed to be cloned in the traditional sense. This implementation suggests that a `PlayerRef` is unique per player and its cloning operation simply returns the same instance.
+*Note : Cette méthode retourne `this`.* Les instances de `PlayerRef` sont essentiellement des références et ne sont pas conçues pour être clonées au sens traditionnel. Cette implémentation suggère qu'une `PlayerRef` est unique par joueur et que son opération de clonage renvoie simplement la même instance.

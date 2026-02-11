@@ -1,196 +1,196 @@
-# Player
+# Joueur (Composant d'Entité)
 
-The `Player` class represents the actual in-game entity for a player, extending `LivingEntity` and implementing several interfaces for command sending, permission holding, and metrics provision. It serves as the primary component for interacting with a player's state, inventory, client-side UI managers, game mode, and various in-game mechanics.
+La classe `Player` représente l'entité de jeu réelle pour un joueur. Elle étend `LivingEntity` (Entité Vivante) et implémente plusieurs interfaces pour l'envoi de commandes, la détention de permissions et la fourniture de métriques. Elle sert de composant principal pour interagir avec l'état d'un joueur, son inventaire, les gestionnaires d'interface utilisateur côté client, le mode de jeu et diverses mécaniques de jeu.
 
-## Constants
+## Constantes
 
 ### `public static final MetricsRegistry<Player> METRICS_REGISTRY`
-A `MetricsRegistry` specifically for `Player` entities, used for tracking player-related statistics and metrics.
+Un `MetricsRegistry` spécifiquement pour les entités `Player`, utilisé pour suivre les statistiques et les métriques liées au joueur.
 
 ### `public static final KeyedCodec<PlayerConfigData> PLAYER_CONFIG_DATA`
-A `KeyedCodec` for serializing and deserializing `PlayerConfigData`, which holds persistent configuration and settings for a player.
+Un `KeyedCodec` pour la sérialisation et la désérialisation de `PlayerConfigData`, qui contient la configuration persistante et les paramètres d'un joueur.
 
 ### `public static final BuilderCodec<Player> CODEC`
-A `BuilderCodec` for the `Player` entity, used for its serialization and deserialization.
+Un `BuilderCodec` pour l'entité `Player`, utilisé pour sa sérialisation et sa désérialisation.
 
 ### `public static final int DEFAULT_VIEW_RADIUS_CHUNKS = 6`
-The default view radius for players, in chunks.
+Le rayon de vue par défaut pour les joueurs, exprimé en "chunks" (morceaux de monde).
 
 ### `public static final long RESPAWN_INVULNERABILITY_TIME_NANOS`
-The duration (in nanoseconds) a player remains invulnerable after respawning.
+La durée (en nanosecondes) pendant laquelle un joueur reste invulnérable après être réapparu.
 
 ### `public static final long MAX_TELEPORT_INVULNERABILITY_MILLIS`
-The maximum duration (in milliseconds) a player can remain invulnerable after a teleportation.
+La durée maximale (en millisecondes) pendant laquelle un joueur peut rester invulnérable après une téléportation.
 
-## Static Methods
+## Méthodes Statiques
 
 ### `public static ComponentType<EntityStore, Player> getComponentType()`
-Retrieves the `ComponentType` specifically associated with `Player` components. This is crucial for accessing or manipulating `Player` instances within an `EntityStore`.
-- **Returns:** The `ComponentType` for `Player`.
+Récupère le `ComponentType` spécifiquement associé aux composants `Player`. C'est crucial pour accéder ou manipuler les instances de `Player` au sein d'un `EntityStore`.
+- **Retourne :** Le `ComponentType` pour `Player`.
 
 ### `public static CompletableFuture<Transform> getRespawnPosition(@Nonnull Ref<EntityStore> ref, @Nonnull String worldName, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-Asynchronously calculates and returns the optimal respawn position for a player within a given world, taking into account any configured respawn points and potential obstructions.
-- **Parameters:**
-    - `ref`: A `Ref` to the player's entity in the `EntityStore`.
-    - `worldName`: The name of the world the player is respawning in.
-    - `componentAccessor`: An accessor for entity components.
-- **Returns:** A `CompletableFuture<Transform>` that resolves to the calculated respawn `Transform`.
+Calcule et retourne de manière asynchrone (en arrière-plan) la position de réapparition optimale pour un joueur dans un monde donné, en tenant compte des points de réapparition configurés et des obstructions potentielles.
+- **Paramètres :**
+    - `ref` : Une `Ref` (référence) vers l'entité du joueur dans l'`EntityStore`.
+    - `worldName` : Le nom du monde dans lequel le joueur réapparaît.
+    - `componentAccessor` : Un accesseur pour les composants d'entité, permettant d'accéder aux données des autres composants attachés à cette entité.
+- **Retourne :** Un `CompletableFuture<Transform>` qui se résout en `Transform` (position et rotation) de réapparition calculée.
 
 ### `public static void setGameMode(@Nonnull Ref<EntityStore> playerRef, @Nonnull GameMode gameMode, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-Sets the game mode for a specific player. This method handles updating internal player state, sending the appropriate packets to the client, and managing associated permissions.
-- **Parameters:**
-    - `playerRef`: A `Ref` to the player's entity.
-    - `gameMode`: The `GameMode` to set (e.g., `Creative`, `Survival`).
-    - `componentAccessor`: An accessor for entity components.
+Définit le mode de jeu (`GameMode`) pour un joueur spécifique. Cette méthode gère la mise à jour de l'état interne du joueur, l'envoi des paquets appropriés au client et la gestion des permissions associées.
+- **Paramètres :**
+    - `playerRef` : Une `Ref` vers l'entité du joueur.
+    - `gameMode` : Le `GameMode` à définir (par exemple, `Creative`, `Survival`).
+    - `componentAccessor` : Un accesseur pour les composants d'entité.
 
 ### `public static void initGameMode(@Nonnull Ref<EntityStore> playerRef, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-Initializes the game mode for a player, typically called when a player first joins or their entity is created. If no game mode is set, it defaults to the world's configured game mode.
-- **Parameters:**
-    - `playerRef`: A `Ref` to the player's entity.
-    - `componentAccessor`: An accessor for entity components.
+Initialise le mode de jeu pour un joueur, généralement appelé lorsqu'un joueur se connecte pour la première fois ou que son entité est créée. Si aucun mode de jeu n'est défini, il utilise le mode de jeu configuré pour le monde.
+- **Paramètres :**
+    - `playerRef` : Une `Ref` vers l'entité du joueur.
+    - `componentAccessor` : Un accesseur pour les composants d'entité.
 
-## Methods
+## Méthodes
 
 ### `public void copyFrom(@Nonnull Player oldPlayerComponent)`
-Copies relevant state and data from another `Player` component instance. This is often used during player respawns or transfers to maintain continuity.
-- **Parameters:**
-    - `oldPlayerComponent`: The `Player` component to copy data from.
+Copie l'état et les données pertinentes d'une autre instance de composant `Player`. Ceci est souvent utilisé lors des réapparitions ou des transferts de joueurs pour maintenir la continuité de leur état.
+- **Paramètres :**
+    - `oldPlayerComponent` : Le composant `Player` à partir duquel copier les données.
 
 ### `public void init(@Nonnull UUID uuid, @Nonnull PlayerRef playerRef)`
-Initializes the `Player` component with the player's `UUID` and `PlayerRef`. This method sets up various player-specific managers like `WindowManager` and `PageManager`.
-- **Parameters:**
-    - `uuid`: The `UUID` of the player.
-    - `playerRef`: The `PlayerRef` instance associated with this player.
+Initialise le composant `Player` avec l'`UUID` du joueur et son `PlayerRef`. Cette méthode configure divers gestionnaires spécifiques au joueur comme `WindowManager` (gestionnaire de fenêtres) et `PageManager` (gestionnaire de pages d'interface).
+- **Paramètres :**
+    - `uuid` : L'`UUID` du joueur.
+    - `playerRef` : L'instance de `PlayerRef` associée à ce joueur.
 
 ### `public Inventory setInventory(Inventory inventory)`
-Sets the player's current `Inventory`. This will replace the player's existing inventory with the provided one.
-- **Parameters:**
-    - `inventory`: The new `Inventory` object for the player.
-- **Returns:** The `Inventory` that was set.
+Définit l'`Inventory` (inventaire) actuel du joueur. Cela remplacera l'inventaire existant du joueur par celui fourni.
+- **Paramètres :**
+    - `inventory` : Le nouvel objet `Inventory` pour le joueur.
+- **Retourne :** L'`Inventory` qui a été défini.
 
 ### `public PlayerConfigData getPlayerConfigData()`
-Retrieves the `PlayerConfigData` object for this player, which contains persistent settings and data specific to the player.
-- **Returns:** The `PlayerConfigData` instance.
+Récupère l'objet `PlayerConfigData` pour ce joueur, qui contient les paramètres et les données persistantes spécifiques au joueur (ceux qui sont sauvegardés entre les sessions).
+- **Retourne :** L'instance de `PlayerConfigData`.
 
 ### `public void markNeedsSave()`
-Marks the player's configuration data as dirty, signaling that it needs to be saved to persistent storage.
+Marque les données de configuration du joueur comme "sales" (`dirty`), signalant qu'elles doivent être sauvegardées dans le stockage persistant (sur le disque).
 
 ### `public WorldMapTracker getWorldMapTracker()`
-Retrieves the `WorldMapTracker` for this player, which manages the player's discovered world map data.
-- **Returns:** The `WorldMapTracker` instance.
+Récupère le `WorldMapTracker` (suiveur de carte du monde) pour ce joueur, qui gère les données de carte du monde découvertes par le joueur.
+- **Retourne :** L'instance de `WorldMapTracker`.
 
 ### `public WindowManager getWindowManager()`
-Retrieves the `WindowManager` for this player, which handles the display and management of client-side UI windows.
-- **Returns:** The `WindowManager` instance.
+Récupère le `WindowManager` (gestionnaire de fenêtres) pour ce joueur, qui gère l'affichage et la gestion des fenêtres d'interface utilisateur côté client.
+- **Retourne :** L'instance de `WindowManager`.
 
 ### `public PageManager getPageManager()`
-Retrieves the `PageManager` for this player, which manages different UI pages or screens presented to the player.
-- **Returns:** The `PageManager` instance.
+Récupère le `PageManager` (gestionnaire de pages) pour ce joueur, qui gère les différentes pages ou écrans d'interface utilisateur présentés au joueur.
+- **Retourne :** L'instance de `PageManager`.
 
 ### `public HudManager getHudManager()`
-Retrieves the `HudManager` for this player, which controls various elements displayed on the player's Heads-Up Display.
-- **Returns:** The `HudManager` instance.
+Récupère le `HudManager` (gestionnaire de l'ATH - Affichage Tête Haute) pour ce joueur, qui contrôle divers éléments affichés sur l'ATH du joueur.
+- **Retourne :** L'instance de `HudManager`.
 
 ### `public HotbarManager getHotbarManager()`
-Retrieves the `HotbarManager` for this player, which manages the player's hotbar inventory.
-- **Returns:** The `HotbarManager` instance.
+Récupère le `HotbarManager` (gestionnaire de la barre rapide) pour ce joueur, qui gère l'inventaire de la barre rapide du joueur.
+- **Retourne :** L'instance de `HotbarManager`.
 
 ### `public boolean isFirstSpawn()`
-Checks if this is the player's first time spawning in the current session or on the server.
-- **Returns:** `true` if it's the first spawn, `false` otherwise.
+Vérifie si c'est la première fois que le joueur apparaît dans la session actuelle ou sur le serveur.
+- **Retourne :** `true` si c'est la première apparition, `false` sinon.
 
 ### `public void setFirstSpawn(boolean firstSpawn)`
-Sets whether this is considered the player's first spawn.
-- **Parameters:**
-    - `firstSpawn`: `true` if it's the first spawn, `false` otherwise.
+Définit si cela est considéré comme la première apparition du joueur.
+- **Paramètres :**
+    - `firstSpawn` : `true` si c'est la première apparition, `false` sinon.
 
 ### `public void resetManagers(@Nonnull Holder<EntityStore> holder)`
-Resets various player-specific managers (e.g., `WorldMapTracker`, `HudManager`, `CameraManager`) to their default states. This is often called during player reinitialization.
-- **Parameters:**
-    - `holder`: The player's `Holder` in the `EntityStore`.
+Réinitialise divers gestionnaires spécifiques au joueur (par exemple, `WorldMapTracker`, `HudManager`, `CameraManager`) à leurs états par défaut. Ceci est souvent appelé lors de la réinitialisation du joueur.
+- **Paramètres :**
+    - `holder` : Le `Holder` du joueur dans l'`EntityStore`.
 
 ### `public boolean isOverrideBlockPlacementRestrictions()`
-Checks if the player currently has block placement restrictions overridden.
-- **Returns:** `true` if restrictions are overridden, `false` otherwise.
+Vérifie si le joueur a actuellement des restrictions de placement de blocs annulées.
+- **Retourne :** `true` si les restrictions sont annulées, `false` sinon.
 
 ### `public void setOverrideBlockPlacementRestrictions(@Nonnull Ref<EntityStore> ref, boolean overrideBlockPlacementRestrictions, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-Sets whether the player's block placement restrictions are overridden. This can be used to grant creative-like building capabilities.
-- **Parameters:**
-    - `ref`: A `Ref` to the player's entity.
-    - `overrideBlockPlacementRestrictions`: `true` to override, `false` to enforce restrictions.
-    - `componentAccessor`: An accessor for entity components.
+Définit si les restrictions de placement de blocs du joueur sont annulées. Cela peut être utilisé pour accorder des capacités de construction de type créatif.
+- **Paramètres :**
+    - `ref` : Une `Ref` vers l'entité du joueur.
+    - `overrideBlockPlacementRestrictions` : `true` pour annuler, `false` pour appliquer les restrictions.
+    - `componentAccessor` : Un accesseur pour les composants d'entité.
 
 ### `public boolean hasPermission(@Nonnull String id)`
-Checks if the player has a specific permission identified by `id`.
-- **Parameters:**
-    - `id`: The permission string (e.g., "myplugin.command.use").
-- **Returns:** `true` if the player has the permission, `false` otherwise.
+Vérifie si le joueur a une permission spécifique identifiée par `id`.
+- **Paramètres :**
+    - `id` : La chaîne de permission (par exemple, "monplugin.commande.utiliser").
+- **Retourne :** `true` si le joueur a la permission, `false` sinon.
 
 ### `public boolean hasPermission(@Nonnull String id, boolean def)`
-Checks if the player has a specific permission, providing a default value if the permission is not explicitly set.
-- **Parameters:**
-    - `id`: The permission string.
-    - `def`: The default boolean value to return if the permission is not found.
-- **Returns:** `true` if the player has the permission or the default is `true`, `false` otherwise.
+Vérifie si le joueur a une permission spécifique, en fournissant une valeur par défaut si la permission n'est pas explicitement définie.
+- **Paramètres :`
+    - `id` : La chaîne de permission.
+    - `def` : La valeur booléenne par défaut à retourner si la permission n'est pas trouvée.
+- **Retourne :** `true` si le joueur a la permission ou si la valeur par défaut est `true`, `false` sinon.
 
 ### `public boolean hasSpawnProtection()`
-Checks if the player currently has spawn protection (invulnerability after spawning/teleporting).
-- **Returns:** `true` if the player is spawn protected, `false` otherwise.
+Vérifie si le joueur bénéficie actuellement d'une protection de réapparition (invulnérabilité après la réapparition/téléportation).
+- **Retourne :** `true` si le joueur est protégé à la réapparition, `false` sinon.
 
 ### `public boolean isWaitingForClientReady()`
-Checks if the server is currently waiting for the client to signal that it's ready after a spawn or teleport.
-- **Returns:** `true` if waiting for client readiness, `false` otherwise.
+Vérifie si le serveur attend actuellement que le client signale qu'il est prêt après une apparition ou une téléportation.
+- **Retourne :** `true` si le serveur attend que le client soit prêt, `false` sinon.
 
 ### `public void setClientViewRadius(int clientViewRadius)`
-Sets the client's requested view radius in chunks. The actual view radius might be capped by server settings.
-- **Parameters:**
-    - `clientViewRadius`: The desired view radius in chunks.
+Définit le rayon de vue demandé par le client en "chunks". Le rayon de vue réel peut être plafonné par les paramètres du serveur.
+- **Paramètres :**
+    - `clientViewRadius` : Le rayon de vue souhaité en "chunks".
 
 ### `public int getClientViewRadius()`
-Retrieves the client's requested view radius in chunks.
-- **Returns:** The client's requested view radius.
+Récupère le rayon de vue demandé par le client en "chunks".
+- **Retourne :** Le rayon de vue demandé par le client.
 
 ### `public int getViewRadius()`
-Retrieves the effective view radius for the player, which is the minimum of the client's requested radius and the server's maximum allowed view radius.
-- **Returns:** The effective view radius in chunks.
+Récupère le rayon de vue effectif pour le joueur, qui est le minimum du rayon demandé par le client et du rayon de vue maximal autorisé par le serveur.
+- **Retourne :** Le rayon de vue effectif en "chunks".
 
 ### `public boolean canDecreaseItemStackDurability(@Nonnull Ref<EntityStore> ref, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-Determines if an item stack's durability can decrease for this player, typically based on their game mode (e.g., durability does not decrease in Creative mode).
-- **Parameters:**
-    - `ref`: A `Ref` to the player's entity.
-    - `componentAccessor`: An accessor for entity components.
-- **Returns:** `true` if durability can decrease, `false` otherwise.
+Détermine si la durabilité d'un objet (`ItemStack`) peut diminuer pour ce joueur, généralement en fonction de son mode de jeu (par exemple, la durabilité ne diminue pas en mode Créatif).
+- **Paramètres :**
+    - `ref` : Une `Ref` vers l'entité du joueur.
+    - `componentAccessor` : Un accesseur pour les composants d'entité.
+- **Retourne :** `true` si la durabilité peut diminuer, `false` sinon.
 
 ### `public boolean canApplyItemStackPenalties(@Nonnull Ref<EntityStore> ref, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-Determines if item stack penalties (e.g., breaking an item) can be applied to this player.
-- **Parameters:**
-    - `ref`: A `Ref` to the player's entity.
-    - `componentAccessor`: An accessor for entity components.
-- **Returns:** `true` if penalties can apply, `false` otherwise.
+Détermine si des pénalités d'objet (par exemple, casser un objet) peuvent être appliquées à ce joueur.
+- **Paramètres :**
+    - `ref` : Une `Ref` vers l'entité du joueur.
+    - `componentAccessor` : Un accesseur pour les composants d'entité.
+- **Retourne :** `true` si des pénalités peuvent être appliquées, `false` sinon.
 
 ### `public ItemStackSlotTransaction updateItemStackDurability(@Nonnull Ref<EntityStore> ref, @Nonnull ItemStack itemStack, ItemContainer container, int slotId, double durabilityChange, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-Updates the durability of an `ItemStack` in the player's inventory, applying necessary logic for item breakage and sending notifications.
-- **Parameters:**
-    - `ref`: A `Ref` to the player's entity.
-    - `itemStack`: The `ItemStack` whose durability is being updated.
-    - `container`: The `ItemContainer` holding the item.
-    - `slotId`: The slot ID of the item within the container.
-    - `durabilityChange`: The amount of durability change (positive for increase, negative for decrease).
-    - `componentAccessor`: An accessor for entity components.
-- **Returns:** An `ItemStackSlotTransaction` if the durability was updated, `null` otherwise.
+Met à jour la durabilité d'un `ItemStack` dans l'inventaire du joueur, en appliquant la logique nécessaire pour la casse de l'objet et l'envoi de notifications.
+- **Paramètres :**
+    - `ref` : Une `Ref` vers l'entité du joueur.
+    - `itemStack` : L'`ItemStack` dont la durabilité est mise à jour.
+    - `container` : Le `ItemContainer` qui contient l'objet.
+    - `slotId` : L'ID de l'emplacement de l'objet dans le conteneur.
+    - `durabilityChange` : La quantité de changement de durabilité (positive pour une augmentation, négative pour une diminution).
+    - `componentAccessor` : Un accesseur pour les composants d'entité.
+- **Retourne :** Une `ItemStackSlotTransaction` si la durabilité a été mise à jour, `null` sinon.
 
 ### `public GameMode getGameMode()`
-Retrieves the player's current `GameMode`.
-- **Returns:** The player's `GameMode`.
+Récupère le `GameMode` (mode de jeu) actuel du joueur.
+- **Retourne :** Le `GameMode` du joueur.
 
 ### `public String getDisplayName()`
-Returns the player's display name, which is typically their username.
-- **Returns:** The player's display name as a `String`.
+Retourne le nom d'affichage du joueur, qui est généralement son nom d'utilisateur.
+- **Retourne :** Le nom d'affichage du joueur sous forme de `String`.
 
-## Deprecated Methods
+## Méthodes Dépréciées
 
 ### `public PacketHandler getPlayerConnection()`
-*Deprecated.* Use `PlayerRef.getPacketHandler()` instead to get the player's packet handler.
+*Déprécié.* Utilisez `PlayerRef.getPacketHandler()` à la place pour obtenir le gestionnaire de paquets du joueur. Cette méthode existe pour la compatibilité, mais la nouvelle approche est de passer par `PlayerRef`.
 
 ### `public PlayerRef getPlayerRef()`
-*Deprecated.* Retrieves the associated `PlayerRef` instance. This method is deprecated as the `Player` component usually works with its own `Ref<EntityStore>` and `ComponentAccessor`.
+*Déprécié.* Récupère l'instance `PlayerRef` associée. Cette méthode est dépréciée car le composant `Player` fonctionne généralement avec sa propre `Ref<EntityStore>` et `ComponentAccessor`. Elle est moins directe que les nouvelles méthodes basées sur les composants.

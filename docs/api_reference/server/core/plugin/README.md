@@ -1,9 +1,9 @@
-# Server Core Plugin API Reference
+# Référence API du Système de Plugins du Cœur du Serveur
 
-This section provides detailed API documentation for the core plugin management components of the Hytale server. These classes are fundamental for developing and managing plugins (mods) that extend the server's functionality.
+Cette section fournit une documentation API détaillée pour les composants clés de la gestion des plugins du serveur Hytale. Ces classes sont fondamentales pour développer et gérer les plugins (vos mods) qui étendent les fonctionnalités du serveur.
 
 ## Classes
 
--   [`PluginManager`](./PluginManager.md): Manages the lifecycle of all plugins on the server.
--   [`PluginBase`](./PluginBase.md): The abstract base class for all Hytale plugins, providing common functionalities and access to various server registries.
--   [`JavaPlugin`](./JavaPlugin.md): A concrete abstract class extending `PluginBase`, specifically designed for plugins written in Java.
+-   [`PluginManager`](./PluginManager.md) : Gère le cycle de vie de tous les plugins sur le serveur (chargement, démarrage, arrêt, etc.).
+-   [`PluginBase`](./PluginBase.md) : La classe de base abstraite pour tous les plugins Hytale. Elle fournit des fonctionnalités communes et un accès aux divers registres du serveur.
+-   [`JavaPlugin`](./JavaPlugin.md) : Une classe abstraite concrète qui étend `PluginBase`, spécifiquement conçue pour les plugins écrits en Java. C'est la classe que la plupart de vos mods étendront.

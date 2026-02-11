@@ -1,7 +1,7 @@
-# Server Core Entity API Reference
+# Référence API du Système d'Entités du Cœur du Serveur
 
-This section provides detailed API documentation for the core entity system of the Hytale server. These classes are fundamental for understanding and interacting with entities within the game world.
+Cette section fournit une documentation API détaillée pour le système d'entités central du serveur Hytale. Ces classes sont fondamentales pour comprendre et interagir avec les entités (joueurs, créatures, objets) dans le monde du jeu.
 
 ## Classes
 
--   [`Entity`](./Entity.md): The base class for all entities in the Hytale world, built upon a component-based architecture.
+-   [`Entity`](./Entity.md) : La classe de base pour toutes les entités dans le monde de Hytale, construite sur une architecture basée sur les composants.

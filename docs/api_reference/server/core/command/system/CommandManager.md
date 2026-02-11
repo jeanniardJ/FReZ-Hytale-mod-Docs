@@ -1,55 +1,55 @@
 # CommandManager
 
-The `CommandManager` class is the central authority for managing and dispatching commands within the Hytale server. It allows for the registration of new commands, handling command execution from various sources (like players or the console), and managing command-related permissions. Mod developers will interact with this manager to add custom commands to their server.
+La classe `CommandManager` est l'autorité centrale pour la gestion et l'exécution des commandes au sein du serveur Hytale. Elle permet l'enregistrement de nouvelles commandes, la gestion de leur exécution depuis diverses sources (comme les joueurs ou la console) et la gestion des permissions liées aux commandes. Les développeurs de mods interagiront avec ce gestionnaire pour ajouter des commandes personnalisées à leur serveur.
 
-## Static Methods
+## Méthodes Statiques
 
 ### `public static CommandManager get()`
-Retrieves the singleton instance of the `CommandManager`. This is the primary way to access command management functionality.
-- **Returns:** The singleton `CommandManager` instance.
+Récupère l'instance "singleton" du `CommandManager`. C'est le moyen principal d'accéder aux fonctionnalités de gestion des commandes.
+- **Retourne :** L'instance unique du `CommandManager`.
 
-## Methods
+## Méthodes
 
 ### `public Map<String, AbstractCommand> getCommandRegistration()`
-Returns an immutable map of all currently registered commands. The keys are the command names (case-insensitive), and the values are their corresponding `AbstractCommand` instances.
-- **Returns:** A `Map` of command names to `AbstractCommand` objects.
+Retourne une carte (`Map`) immuable de toutes les commandes actuellement enregistrées. Les clés sont les noms des commandes (insensible à la casse) et les valeurs sont leurs instances `AbstractCommand` correspondantes. Cela peut être utile pour inspecter les commandes disponibles.
+- **Retourne :** Une `Map` des noms de commandes vers des objets `AbstractCommand`.
 
 ### `public Map<String, Set<String>> createVirtualPermissionGroups()`
-Generates a map of virtual permission groups based on the permissions defined by registered commands. This is primarily used for internal permission management and introspection.
-- **Returns:** A `Map` where keys are permission group names and values are sets of associated permissions.
+Génère une carte des groupes de permissions virtuels basés sur les permissions définies par les commandes enregistrées. Ceci est principalement utilisé pour la gestion interne des permissions et l'introspection (examiner la structure interne).
+- **Retourne :** Une `Map` où les clés sont les noms des groupes de permissions et les valeurs sont des ensembles (`Set`) de permissions associées.
 
 ### `public void registerSystemCommand(@Nonnull AbstractCommand command)`
-Registers a command as a system-level command. These commands are typically part of the core server functionality but can also be extended by mods.
-- **Parameters:**
-    - `command`: The `AbstractCommand` instance to register.
+Enregistre une commande comme une commande de niveau système. Ces commandes font généralement partie des fonctionnalités de base du serveur, mais peuvent potentiellement être étendues par les mods.
+- **Paramètres :**
+    - `command` : L'instance `AbstractCommand` à enregistrer.
 
 ### `public CommandRegistration register(@Nonnull AbstractCommand command)`
-Registers a custom command with the server. This is the main method for mod developers to add their own commands. Upon successful registration, a `CommandRegistration` object is returned, which can be used to manage the command's lifecycle (e.g., unregistration).
-- **Parameters:**
-    - `command`: The `AbstractCommand` instance representing the command to register.
-- **Returns:** A `CommandRegistration` object if the command was successfully registered, or `null` if registration failed (e.g., due to an invalid name or conflict).
+Enregistre une commande personnalisée auprès du serveur. C'est la méthode principale que les développeurs de mods utiliseraient pour ajouter leurs propres commandes. Après un enregistrement réussi, un objet `CommandRegistration` est retourné, qui peut être utilisé pour gérer le cycle de vie de la commande (par exemple, la désenregistrer).
+- **Paramètres :**
+    - `command` : L'instance `AbstractCommand` représentant la commande à enregistrer.
+- **Retourne :** Un objet `CommandRegistration` si la commande a été enregistrée avec succès, ou `null` si l'enregistrement a échoué (par exemple, en raison d'un nom invalide ou d'un conflit).
 
 ### `public CompletableFuture<Void> handleCommand(@Nonnull PlayerRef playerRef, @Nonnull String command)`
-Dispatches a command string for execution, typically originating from a player. The command is processed asynchronously.
-- **Parameters:**
-    - `playerRef`: A `PlayerRef` object representing the player who issued the command.
-    - `command`: The full command string, including the command name and arguments.
-- **Returns:** A `CompletableFuture<Void>` that completes when the command has finished execution or an error occurred.
+Envoie une chaîne de commande pour exécution, généralement à l'origine d'un joueur. La commande est traitée de manière asynchrone (en arrière-plan), ce qui signifie que le serveur peut continuer à faire d'autres choses pendant que la commande est traitée.
+- **Paramètres :**
+    - `playerRef` : Un objet `PlayerRef` représentant le joueur qui a émis la commande.
+    - `command` : La chaîne de commande complète, incluant le nom de la commande et ses arguments (par exemple, "teleport PlayerName 100 60 200").
+- **Retourne :** Un `CompletableFuture<Void>` qui se termine lorsque la commande a fini son exécution ou qu'une erreur s'est produite.
 
 ### `public CompletableFuture<Void> handleCommand(@Nonnull CommandSender commandSender, @Nonnull String commandString)`
-Dispatches a command string for execution, originating from any `CommandSender` (e.g., a player, the console, or another plugin). The command is processed asynchronously.
-- **Parameters:**
-    - `commandSender`: The `CommandSender` who issued the command.
-    - `commandString`: The full command string, including the command name and arguments.
-- **Returns:** A `CompletableFuture<Void>` that completes when the command has finished execution or an error occurred.
+Envoie une chaîne de commande pour exécution, provenant de n'importe quel `CommandSender` (par exemple, un joueur, la console ou un autre plugin). La commande est traitée de manière asynchrone.
+- **Paramètres :**
+    - `commandSender` : Le `CommandSender` qui a émis la commande.
+    - `commandString` : La chaîne de commande complète.
+- **Retourne :** Un `CompletableFuture<Void>` qui se termine lorsque la commande a fini son exécution ou qu'une erreur s'est produite.
 
 ### `public CompletableFuture<Void> handleCommands(@Nonnull CommandSender sender, @Nonnull Deque<String> commands)`
-Dispatches a sequence of command strings for execution by a `CommandSender`. Each command in the deque is processed sequentially.
-- **Parameters:**
-    - `sender`: The `CommandSender` who issued the commands.
-    - `commands`: A `Deque` (double-ended queue) of command strings to be executed.
-- **Returns:** A `CompletableFuture<Void>` that completes when all commands in the sequence have finished execution.
+Envoie une séquence de chaînes de commande pour exécution par un `CommandSender`. Chaque commande dans la `Deque` (une file d'attente à double extrémité) est traitée séquentiellement.
+- **Paramètres :**
+    - `sender` : Le `CommandSender` qui a émis les commandes.
+    - `commands` : Une `Deque` de chaînes de commande à exécuter.
+- **Retourne :** Un `CompletableFuture<Void>` qui se termine lorsque toutes les commandes de la séquence ont fini leur exécution.
 
 ### `public String getName()`
-Returns the name of the owner of these commands. In the context of the core server, this typically returns "HytaleServer".
-- **Returns:** The owner's name as a `String`.
+Retourne le nom du propriétaire de ces commandes. Dans le contexte du serveur Hytale, cela retourne généralement "HytaleServer".
+- **Retourne :** Le nom du propriétaire sous forme de `String`.
