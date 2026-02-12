@@ -168,3 +168,62 @@ index.
 1. Vérifiez que le chemin du fichier correspond : `"YourPlugin/MyPage.ui"` correspond à
    `Common/UI/Custom/YourPlugin/MyPage.ui`.
 2. Revoyez la syntaxe du fichier UI.
+
+## 7. Exemple Concret : La Page des Souvenirs (MemoriesPage)
+
+Pour illustrer ces concepts, analysons `MemoriesPage.java`, une classe complexe qui gère l'interface des "Souvenirs" dans le jeu.
+
+### Objectif de la Page
+
+Cette page permet au joueur de visualiser les souvenirs qu'il a collectés, organisés par catégories. Elle affiche la progression totale et les détails de chaque souvenir.
+
+### Structure de la Classe
+
+La classe `MemoriesPage` hérite de `InteractiveCustomUIPage` et gère deux affichages principaux :
+1.  **La vue des catégories** : Affiche une liste de toutes les catégories de souvenirs.
+2.  **La vue des souvenirs** : Affiche les souvenirs d'une catégorie sélectionnée.
+
+Un état interne, `currentCategory`, permet de savoir quelle vue afficher.
+
+### `build()` - Construction de l'Interface
+
+La méthode `build()` est le cœur de la logique d'affichage. Voici comment elle fonctionne :
+
+1.  **Si `currentCategory` est `null`**, on affiche la liste des catégories :
+    *   On charge un template de base : `cmd.append("Pages/Memories/MemoriesCategoryPanel.ui");`
+    *   On récupère les données (tous les souvenirs, ceux déjà enregistrés) via `MemoriesPlugin.get()`.
+    *   On calcule et affiche la barre de progression.
+    *   On boucle sur chaque catégorie pour l'ajouter à une liste dynamique (`#IconList`), en utilisant la technique du sélecteur indexé.
+    *   Pour chaque catégorie, on affiche si elle est complétée et on ajoute un indicateur si de nouveaux souvenirs y ont été ajoutés.
+    *   On lie un événement au clic sur chaque catégorie pour passer à la vue des souvenirs (`PageAction.ViewCategory`).
+
+2.  **Si `currentCategory` a une valeur**, on affiche les souvenirs de cette catégorie :
+    *   On charge un autre template : `cmd.append("Pages/Memouries/MemoriesPanel.ui");`
+    *   On trie les souvenirs par ordre alphabétique.
+    *   On boucle sur la liste des souvenirs pour les afficher, en marquant ceux qui sont déjà découverts.
+    *   Si un souvenir est sélectionné (`selectedMemory`), on affiche ses détails (nom, date, lieu).
+    *   On ajoute un bouton "Retour" (`PageAction.Back`) pour revenir à la vue des catégories.
+
+### `handleDataEvent()` - Gestion des Actions
+
+Cette méthode reçoit les événements déclenchés par le joueur dans l'interface, encapsulés dans l'objet `PageEventData`.
+
+*   **`PageAction.ViewCategory`**: Met à jour `this.currentCategory` avec la catégorie choisie et appelle `this.rebuild()` pour redessiner l'interface.
+*   **`PageAction.Back`**: Remet `this.currentCategory` à `null` et appelle `this.rebuild()` pour afficher à nouveau les catégories.
+*   **`PageAction.SelectMemory`**: Met à jour `this.selectedMemory`, puis met à jour l'affichage des détails du souvenir sans tout redessiner, via un `UICommandBuilder` envoyé directement.
+
+### `PageEventData` et `PageAction` - Communication UI ↔ Serveur
+
+*   La classe interne `PageEventData` définit les données qui transitent entre le client (l'interface) et le serveur (le code Java). Son `CODEC` est crucial pour sérialiser/désérialiser ces données.
+*   L'énumération `PageAction` standardise les types d'actions possibles, ce qui rend le `switch` dans `handleDataEvent()` clair et robuste.
+
+Cet exemple montre comment une page UI complexe peut être gérée avec un état interne, plusieurs templates, et une logique de construction dynamique pour créer une expérience riche pour le joueur.
+
+### `MemoriesUnlockedPage` - Une Page de Transition
+
+Cette seconde page, beaucoup plus simple, sert d'écran de transition.
+
+*   **`build()`** : Elle charge un unique template (`Pages/Memories/MemoriesUnlocked.ui`) et ajoute un seul bouton, `#DiscoverMemoriesButton`.
+*   **`handleDataEvent()`** : Lorsque le joueur clique sur le bouton, l'événement `DiscoverMemories` est reçu. La seule action est alors d'ouvrir la page principale `MemoriesPage`.
+
+C'est un bon exemple de cómo les pages peuvent s'enchaîner pour créer un flux de navigation pour l'utilisateur.
