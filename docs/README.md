@@ -28,6 +28,15 @@ Cette section fournit la documentation technique des différentes APIs disponibl
     *   [Présentation Générale](./api_reference/server/core/command/system/README.md)
 *   **API du Système d'Événements**
     *   [Présentation Générale](./api_reference/event/README.md)
+*   **PNJ (Personnages Non Joueurs)**
+    *   [Présentation Générale](./api_reference/server/npc/README.md)
+
+*   **Apparition (Spawning)**
+    *   [Présentation Générale](./api_reference/server/spawning/README.md)
+
+*   **Composants (ECS)**
+    *   [Présentation Générale](./api_reference/component/README.md)
+
 *   **Général**
     *   [Authentification](api_reference/general/authentication.md)
     *   [HytaleServer (Déprécié - Voir "API du Cœur du Serveur")](api_reference/general/hytaleserver.md)
