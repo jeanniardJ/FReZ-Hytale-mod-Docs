@@ -4,6 +4,21 @@ Ce fichier retrace l'historique des découvertes et des mises à jour de la docu
 
 ---
 
+### **Session Gestion des Dépendances et Ordre de Chargement (Date actuelle)**
+
+#### ✨ Nouvelles Découvertes
+*   **Gestion des Dépendances Gradle (`build.gradle`)** :
+    *   Clarification sur l'utilisation de `implementation(files("libs/Vault.jar"))` pour inclure les JAR locaux dans le plugin final, en remplacement de `compileOnly` qui suppose la présence de la librairie au runtime.
+*   **Déclaration de Dépendances `manifest.json`** :
+    *   Confirmation du format des dépendances runtime dans `manifest.json` (`"Dependencies": { "Vault": "*" }`).
+    *   Constatation que cette déclaration peut être ignorée dans certains environnements de développement (chargement depuis `src/main`).
+*   **Vérification Programatique des Dépendances** :
+    *   Mise en place d'une méthode robuste pour vérifier la présence d'un plugin (`PluginBase`) dépendant dans la méthode `setup()` de `JavaPlugin` en utilisant `PluginManager.get().getPlugins()` et `plugin.getManifest().getName()`.
+    *   Déplacement de l'initialisation de l'API des dépendances du constructeur de plugin vers la méthode `setup()`.
+    *   Correction de l'accès au `PluginManager` via `PluginManager.get()` au lieu de `this.getServer().getPluginManager()`.
+
+---
+
 ### **Session de Documentation UI Complète (13/02/2026)**
 
 #### ✨ Nouvelles Documentations

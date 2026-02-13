@@ -41,19 +41,25 @@ Votre plugin est comme un programme qui a différentes étapes de vie.
 ### A. Constructeur `public MyPlugin(JavaPluginInit init)`
 *   **Quand ?** Hytale découvre votre plugin (très tôt, avant même que le serveur ne démarre complètement).
 *   **Quoi faire ?**
-    *   Enregistrer vos fichiers de configuration (`withConfig`).
+    *   Appeler `super(init)`.
+    *   Enregistrer vos fichiers de configuration (`withConfig()`).
     *   Sauvegarder l'instance de votre plugin (`instance = this`) si vous utilisez le pattern Singleton.
-*   **Ce qu'il ne faut PAS faire :** Ne lancez pas de logique de jeu ici, ne lisez pas la configuration (`config.get()`). Le serveur n'est pas encore prêt !
+*   **Ce qu'il ne faut PAS faire :** Ne lancez **aucune logique de jeu ou d'initialisation dépendant d'autres plugins ou de l'API serveur** ici. Le serveur n'est pas encore prêt, et tenter d'accéder à d'autres plugins entraînera des `NullPointerException` ou `NoClassDefFoundError`.
 
-### B. Démarrage `public void start()`
+### B. Initialisation `protected void setup()`
+*   **Quand ?** Appelé après le constructeur, une fois que tous les plugins ont été découverts. C'est le début de la phase d'initialisation où les dépendances sont souvent prêtes.
+*   **Quoi faire ?**
+    *   **Vérifier les dépendances** : C'est l'endroit idéal pour vérifier si les plugins dont vous dépendez sont chargés et actifs, et initialiser les gestionnaires qui en dépendent.
+    *   **Initialiser les services internes non liés au jeu** : Mettez en place les composants internes de votre plugin qui n'interagissent pas directement avec les événements de jeu ou la configuration des utilisateurs.
+
+### C. Démarrage `public void start()`
 *   **Quand ?** Le serveur a fini de charger et est prêt à fonctionner.
 *   **Quoi faire ?**
     *   **Lire la configuration** (`config.get()`) : C'est le moment !
-    *   **Initialiser vos Services et Managers** : Créez les objets qui gèrent la logique de votre plugin.
     *   **Enregistrer vos Listeners (Événements)** : Dites à Hytale : "Je veux être prévenu quand un joueur se connecte, quand il parle, etc."
     *   **Lancer vos Timers/Tasks** : Démarrez vos boucles d'annonces automatiques, par exemple.
 
-### C. Arrêt `public void shutdown()`
+### D. Arrêt `public void shutdown()`
 *   **Quand ?** Le serveur s'éteint.
 *   **Quoi faire ?**
     *   **Nettoyer** : Arrêtez tous vos threads, timers, sauvegardez les données importantes. C'est crucial pour éviter les fuites de mémoire ou que le serveur ne s'arrête pas correctement.
