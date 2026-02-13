@@ -31,7 +31,12 @@ Permet d'interagir avec les autres plugins chargés.
 ```java
 import com.hypixel.hytale.server.core.plugin.PluginManager;
 
-PluginManager pluginManager = server.getPluginManager();
+// Option 1: Depuis l'instance de HytaleServer
+PluginManager pluginManager = HytaleServer.get().getPluginManager();
+// pluginManager.getPlugin("NomDuPlugin");
+
+// Option 2: Accès direct via la méthode statique (Recommandé dans PluginBase ou JavaPlugin)
+PluginManager pluginManager = PluginManager.get();
 // pluginManager.getPlugin("NomDuPlugin");
 ```
 
