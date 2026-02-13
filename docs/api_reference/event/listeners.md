@@ -54,7 +54,7 @@ getEventRegistry().registerAsync(MyHeavyEvent.class, future -> {
 ## Liste des Événements Connus
 
 ### Joueurs
-*   `PlayerConnectEvent` : Quand un joueur se connecte au serveur.
+*   [`PlayerConnectEvent`](./events/player/PlayerConnectEvent.md) : Quand un joueur se connecte au serveur.
 *   `PlayerDisconnectEvent` : Quand un joueur se déconnecte.
 *   `AddPlayerToWorldEvent` : Quand un joueur est ajouté à un monde (connexion ou changement de monde).
     *   **Utilité** : Idéal pour détecter les changements de monde.

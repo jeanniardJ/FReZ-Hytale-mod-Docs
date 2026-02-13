@@ -5,3 +5,4 @@ Cette section fournit la documentation détaillée pour les classes fondamentale
 ## Classes
 
 -   [`ComponentType`](./ComponentType.md) : Un identifiant unique et un conteneur de métadonnées pour chaque type de composant dans le système ECS.
+-   [`Store`](./Store.md) : Le cœur du système ECS, gérant toutes les entités et leurs composants de manière performante et thread-safe.

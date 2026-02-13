@@ -38,7 +38,7 @@ PluginManager pluginManager = server.getPluginManager();
 ### 3. Gestion des Commandes (`CommandManager`)
 
 Enregistrement et gestion des commandes.
-> Note : Préférez utiliser `getCommandRegistry()` dans votre classe `JavaPlugin`.
+> Note : Pour enregistrer des commandes globales, préférez utiliser `HytaleServer.get().getCommandManager().register(...)`. La méthode `getCommandRegistry()` de votre plugin est pour un usage interne ou pour des commandes de plus bas niveau.
 
 ```java
 import com.hypixel.hytale.server.core.command.CommandManager;

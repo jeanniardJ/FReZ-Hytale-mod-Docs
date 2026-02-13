@@ -16,7 +16,21 @@ Hytale utilise un système puissant de `Codec` pour mapper automatiquement les f
 ```
 
 ## 2. Classe Java Correspondante
-Il faut utiliser `BuilderCodec` pour construire le mapping.
+Il faut utiliser `BuilderCodec` pour construire le mapping champ par champ.
+
+### `KeyedCodec` et les Règles de Nommage
+
+Chaque champ dans le JSON est mappé via un `KeyedCodec`. C'est une enveloppe qui associe une `clé` (le nom du champ dans le JSON) à un `Codec` (qui sait comment lire/écrire la valeur).
+
+**Règles de nommage pour les clés (très important !) :**
+1.  La clé ne doit pas être vide.
+2.  **Si la clé commence par une lettre, elle doit être une majuscule.**
+    *   ✅ `new KeyedCodec<>("MaxPlayers", ...)` -> Valide.
+    *   ❌ `new KeyedCodec<>("maxPlayers", ...)` -> **Invalide**, lèvera une `IllegalArgumentException`.
+3.  **Si la clé commence par un symbole (comme `@`)**, la vérification de la majuscule est ignorée.
+    *   ✅ `new KeyedCodec<>("@InputValue", ...)` -> **Valide**. C'est une convention cruciale pour la liaison de données dans les interfaces utilisateur, où le `@` indique au système de récupérer la *valeur* d'un champ UI.
+
+### Exemple de `BuilderCodec`
 
 ```java
 public class MyConfig {

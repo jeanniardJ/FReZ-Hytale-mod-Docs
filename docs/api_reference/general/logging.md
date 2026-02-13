@@ -27,7 +27,7 @@ HytaleLogger.debug("Données brutes : " + data);
 Dans ce projet, nous avons une classe utilitaire `Log` qui encapsule `HytaleLogger` ou le logger Java standard.
 
 ```java
-import com.jjeanniard.plugins.Log;
+import com.jjeanniard.plugins.coreroleplay.Log;
 
 Log.info("Message");
 Log.warning("Attention");
