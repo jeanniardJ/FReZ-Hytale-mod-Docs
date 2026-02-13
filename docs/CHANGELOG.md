@@ -4,7 +4,21 @@ Ce fichier retrace l'historique des découvertes et des mises à jour de la docu
 
 ---
 
-### **Session UI & Gestion des Annonces (Date actuelle)**
+### **Session de Documentation UI Complète (13/02/2026)**
+
+#### ✨ Nouvelles Documentations
+*   **Interface Utilisateur (UI)**
+    *   Création de `api_reference/ui/ui_system.md`: Guide d'introduction à l'architecture des UI.
+    *   Création de `api_reference/ui/ui_complete_reference.md`: Référence technique complète pour tous les composants, propriétés, styles et API Java.
+    *   Création de `api_reference/ui/troubleshooting.md`: Guide de dépannage pour les erreurs courantes d'UI.
+
+#### 🔄 Améliorations
+*   Refactorisation complète de la section UI de la documentation pour utiliser une structure de `README.md` comme hub central.
+*   Mise à jour des liens dans la documentation principale pour pointer vers la nouvelle section UI améliorée.
+
+---
+
+### **Session UI & Gestion des Annonces (Date précédente)**
 
 #### ✨ Nouvelles Documentations
 *   **Interface Utilisateur (UI)**

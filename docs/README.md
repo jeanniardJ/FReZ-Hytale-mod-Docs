@@ -53,9 +53,7 @@ Cette section fournit la documentation technique des différentes APIs disponibl
 *   **Événements (Général)**
     *   [Écouteurs d'Événements](api_reference/event/listeners.md)
 *   **Interface Utilisateur (UI)**
-    *   [Interface Utilisateur Personnalisée (GUI)](api_reference/ui/custom_ui.md)
-    *   [Messages Formatés](api_reference/ui/message.md)
-    *   [Titres à l'Écran](api_reference/ui/titles.md)
+    *   [Présentation Générale & Guides](./api_reference/ui/README.md)
 *   **Monde**
     *   [Monde (World)](api_reference/world/world.md)
     *   [Configuration du Monde](api_reference/world/world_config.md)

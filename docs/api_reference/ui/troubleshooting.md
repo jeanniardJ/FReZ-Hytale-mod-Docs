@@ -1,73 +1,70 @@
-# UI Troubleshooting
+# Dépannage de l'Interface Utilisateur (UI)
 
-Debugging guide for Hytale Custom UI errors (Red X, parser crashes, etc.)
+Guide de débogage pour les erreurs d'UI Hytale (Croix Rouge, plantages du parser, etc.)
 
-## 1. The "Unknown Node Type" Crash
+## 1. Le Plantage "Unknown Node Type" (Type de Nœud Inconnu)
 
-**Error Log:**
+**Log d'Erreur :**
 `HytaleClient.Interface.UI.Markup.TextParser+TextParserException: Failed to parse file ... – Unknown node type: Image`
 
-**Why it happens:**
-The Hytale client parser in certain versions does not support the `<Image>` tag as a standalone element, or only
-supports it within specific parent containers.
+**Pourquoi ça arrive :**
+Le parser du client Hytale dans certaines versions ne supporte pas la balise `<Image>` comme élément autonome, ou ne la supporte que dans des conteneurs parents spécifiques.
 
-**The Fix:**
-Standardize your UI to use **Groups with Backgrounds** instead of Image nodes. This is functionally identical but
-parser-safe.
+**La Correction :**
+Standardisez votre UI pour utiliser des **`Group` avec des `Background`** au lieu de nœuds `Image`. C'est fonctionnellement identique mais sécuritaire pour le parser.
 
-* ❌ **Avoid:** `Image { TexturePath: "..."; }`
-* ✅ **Use:** `Group { Background: ( TexturePath: "..." ); }`
+*   ❌ **À éviter :** `Image { TexturePath: "..."; }`
+*   ✅ **À utiliser :** `Group { Background: ( TexturePath: "..." ); }`
 
-## 2. The "Failed to Apply CustomUI" Crash Loop
+## 2. La Boucle de Plantage "Failed to Apply CustomUI"
 
-**Symptoms:**
+**Symptômes :**
 
-* Game stutters every X seconds.
-* Client eventually disconnects with "Failed to load CustomUI documents".
-* Console spam of packet errors.
+*   Le jeu saccade toutes les X secondes.
+*   Le client finit par se déconnecter avec "Failed to load CustomUI documents".
+*   La console est inondée d'erreurs de paquets.
 
-**Why it happens:**
-Your Java code is resending the entire UI file (`builder.append(...)`) on every update tick (e.g., inside a scheduled
-task). Reloading the DOM repeatedly corrupts the client's UI state.
+**Pourquoi ça arrive :**
+Votre code Java renvoie le fichier UI entier (`builder.append(...)`) à chaque tick de mise à jour (par exemple, dans une tâche planifiée). Recharger le DOM de manière répétée corrompt l'état de l'UI du client.
 
-**The Fix:**
-Implement the **Load-Update Separation Pattern**:
+**La Correction :**
+Implémentez le **Pattern de Séparation Chargement-Mise à Jour** :
 
-1. **Initialize:** Send the structure once.
-2. **Update:** Send only variable changes using `update(false, builder)`.
+1.  **Initialisation :** Envoyez la structure une seule fois.
+2.  **Mise à jour :** Envoyez uniquement les changements de variables en utilisant `update(false, builder)`.
 
-## 3. The "Red X" (Asset Resolution Failure)
+## 3. La "Croix Rouge" (Échec de Résolution d'Asset)
 
-**Symptoms:**
+**Symptômes :**
 
-* UI loads physically but all textures are replaced by large red crosses.
+*   L'UI se charge physiquement mais toutes les textures sont remplacées par de grandes croix rouges.
 
-**Why it happens:**
-The client cannot find the file at the specified path. This is usually a pathing context issue.
+**Pourquoi ça arrive :**
+Le client ne peut pas trouver le fichier au chemin spécifié. C'est généralement un problème de contexte de chemin.
 
-**The Fix:**
+**La Correction :**
 
-1. **Locality:** Move assets to a subfolder (e.g., `Assets/`) **directly inside** the folder containing your `.ui` file.
-2. **Relative Pathing:** Reference them simply as `"Assets/MyTexture.png"`.
-3. **Manifest:** Ensure `manifest.json` has `"IncludesAssetPack": true`.
+1.  **Localité :** Déplacez les assets dans un sous-dossier (par ex., `Assets/`) **directement à l'intérieur** du dossier contenant votre fichier `.ui`.
+2.  **Chemins Relatifs :** Référencez-les simplement comme `"Assets/MyTexture.png"`.
+3.  **Manifeste :** Assurez-vous que `manifest.json` contient `"IncludesAssetPack": true`.
 
-## 5. "Failed to load CustomUI documents" (Parsing Error)
+## 5. "Failed to load CustomUI documents" (Erreur de Parsing)
 
-**Symptoms:**
-* Client disconnects immediately upon opening the UI.
-* Log shows `Crash - Failed to load CustomUI documents`.
+**Symptômes :**
+*   Le client se déconnecte immédiatement à l'ouverture de l'UI.
+*   Le log affiche `Crash - Failed to load CustomUI documents`.
 
-**Causes & Fixes:**
+**Causes & Corrections :**
 
-1.  **Comments (`//`)**: The parser may fail if comments are present, especially on the same line as properties.
-    *   **Fix**: Remove all comments from `.ui` files.
+1.  **Commentaires (`//`)** : Le parser peut échouer si des commentaires sont présents, surtout sur la même ligne que des propriétés.
+    *   **Correction** : Supprimez tous les commentaires des fichiers `.ui`.
 
-2.  **Broken Imports**: Defining a variable that points to a missing file (e.g., `$C = "../Common.ui";`) causes a crash, even if the variable is unused.
-    *   **Fix**: Remove or comment out imports to missing files.
+2.  **Imports Cassés** : Définir une variable qui pointe vers un fichier manquant (par ex., `$C = "../Common.ui";`) provoque un plantage, même si la variable n'est pas utilisée.
+    *   **Correction** : Supprimez ou commentez les imports vers des fichiers manquants.
 
-3.  **Missing Style Types**: Defining a complex style without its type wrapper causes a parsing error.
-    *   ❌ **Wrong**: `Style: ( Default: (...) );`
-    *   ✅ **Correct**: `Style: TextButtonStyle( Default: (...) );`
+3.  **Types de Style Manquants** : Définir un style complexe sans son enveloppe de type cause une erreur de parsing.
+    *   ❌ **Faux** : `Style: ( Default: (...) );`
+    *   ✅ **Correct** : `Style: TextButtonStyle( Default: (...) );`
 
-4.  **Inline Styles**: Using variables (`@Style`) can sometimes be unstable.
-    *   **Fix**: Define styles inline directly in the component: `Style: LabelStyle(FontSize: 14, ...);`
+4.  **Styles en Ligne** : Utiliser des variables (`@Style`) peut parfois être instable.
+    *   **Correction** : Définissez les styles directement dans le composant : `Style: LabelStyle(FontSize: 14, ...);`

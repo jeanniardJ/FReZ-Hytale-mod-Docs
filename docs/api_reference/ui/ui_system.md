@@ -2,89 +2,42 @@
 
 Hytale utilise un système d'UI déclaratif puissant qui sépare la mise en page (fichiers `.ui`) de la logique (code Java).
 
-## Structure des Fichiers
+## Architecture Client-Serveur
 
-Les fichiers UI doivent être placés dans une structure de dossiers spécifique dans `src/main/resources` :
+1.  **Fichiers `.ui` (Client) :** Les fichiers de layout (`.ui`) sont téléchargés sur le client lorsqu'un joueur se connecte. Le serveur ne peut pas créer ces fichiers dynamiquement ; ils doivent exister à l'avance.
+2.  **`InteractiveCustomUIPage` (Serveur) :** Une classe Java côté serveur qui contrôle l'interface.
+    *   La méthode `build()` est appelée pour construire l'interface, charger le layout, définir des valeurs initiales et lier des événements.
+    *   La méthode `handleDataEvent()` est appelée pour réagir aux interactions de l'utilisateur (clics de bouton, etc.).
+3.  **Communication :**
+    *   Le **serveur** envoie des **commandes** au client pour manipuler l'interface (par exemple, changer un texte, afficher un panneau).
+    *   Le **client** renvoie des **événements** au serveur lorsque l'utilisateur interagit avec l'interface.
+
+**Important :** Toute erreur de syntaxe dans un fichier `.ui` provoquera très probablement la déconnexion du joueur lorsqu'il essaiera d'ouvrir l'interface.
+
+## Structure de Projet Recommandée
+
+Pour une bonne organisation, les fichiers UI doivent être placés dans une structure de dossiers spécifique dans `src/main/resources`.
 
 ```
 src/main/resources/
 └── Common/
     └── UI/
         └── Custom/
-            └── Pages/
+            └── VotreNomDePlugin/
                 └── VotrePage.ui
 ```
 
-## Configuration
+Le code Java pour charger cette page serait alors :
+```java
+// Le chemin est relatif au dossier Common/UI/Custom/
+cmd.append("VotreNomDePlugin/VotrePage.ui"); 
+```
 
-### 1. Manifest (`manifest.json`)
-Il faut indiquer que le plugin contient des assets :
+## Configuration du `manifest.json`
+
+Pour que le serveur reconnaisse et serve les fichiers `.ui` au client, votre `manifest.json` doit inclure :
 ```json
 {
   "IncludesAssetPack": true
 }
 ```
-
-### 2. Import Common.ui
-Au début de chaque fichier `.ui`, il est recommandé d'importer les styles communs :
-```
-$C = "../Common.ui";
-```
-
-## Création d'une Page (Java)
-
-Il existe deux types de pages principaux :
-*   `BasicCustomUIPage` : Pour l'affichage statique.
-*   `InteractiveCustomUIPage<T>` : Pour les formulaires interactifs avec boutons et champs de texte.
-
-### Exemple : Page Interactive
-
-```java
-public class MaPage extends InteractiveCustomUIPage<MaPage.EventData> {
-    
-    // Classe de données pour lier les champs (Binding)
-    public static class EventData {
-        public String inputValue;
-        
-        public static final BuilderCodec<EventData> CODEC = BuilderCodec
-            .builder(EventData.class, EventData::new)
-            .append(new KeyedCodec<>("@inputValue", new StringCodec()),
-                (obj, val) -> obj.inputValue = val,
-                obj -> obj.inputValue)
-            .add()
-            .build();
-    }
-
-    public MaPage(PlayerRef playerRef) {
-        super(playerRef, CustomPageLifetime.CanDismiss, EventData.CODEC);
-    }
-
-    @Override
-    public void build(Ref<EntityStore> ref, UICommandBuilder cmd, UIEventBuilder events, Store<EntityStore> store) {
-        cmd.append("Pages/MaPage.ui");
-        
-        // Liaison des événements
-        events.addEventBinding(CustomUIEventBindingType.Activating, "#monBouton",
-            new EventData().append("@inputValue", "#monChamp.Value"));
-    }
-    
-    @Override
-    public void handleDataEvent(Ref<EntityStore> ref, Store<EntityStore> store, EventData data) {
-        // Logique lors de la soumission
-    }
-}
-```
-
-## Styles et Couleurs
-
-### Variables Utiles (Common.ui)
-*   `$C.@DefaultTextButtonStyle` : Bouton bleu standard.
-*   `$C.@SecondaryTextButtonStyle` : Bouton gris (Annuler).
-*   `$C.@CancelTextButtonStyle` : Bouton rouge (Supprimer).
-*   `$C.@InputBoxBackground` : Fond pour champ de texte.
-
-### Palette de Couleurs (Hex)
-*   `#1e2a3a` : Barre de titre
-*   `#232d3f` : Fond de contenu
-*   `#bfcdd5` : Texte de titre
-*   `#e5e7eb` : Texte principal
