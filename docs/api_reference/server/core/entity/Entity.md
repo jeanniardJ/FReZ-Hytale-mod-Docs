@@ -1,143 +1,133 @@
-# Entité (Entity)
+# 🐾 L'API des Entités (Entity)
 
-La classe `Entity` représente tout objet ou être interactif dans le monde de Hytale. Cela inclut les joueurs, les PNJ (Personnages Non Joueurs), les créatures, les objets, et bien plus encore. Les entités sont construites sur une architecture basée sur les composants (`component-based architecture`), ce qui signifie que leurs comportements et propriétés sont définis par divers `Component`s (composants) qui leur sont attachés et stockés dans un `EntityStore`.
+Ce guide explique comment fonctionnent les entités dans Hytale et comment interagir avec elles en respectant l'architecture du jeu.
 
-De nombreuses méthodes liées à la manipulation directe des propriétés d'entité peuvent être marquées `@Deprecated` (dépréciées) ou `forRemoval = true` (destinées à être supprimées). Cela indique une évolution vers une approche davantage axée sur les composants pour modifier le comportement et les données des entités. Les développeurs de mods devraient privilégier l'interaction avec les entités via leurs `Component`s attachés et l'`EntityStore` lorsque cela est possible.
+## 1. Qu'est-ce qu'une Entité ?
 
-## Constantes
+Dans Hytale, une **entité** représente tout "objet" qui existe dans le monde et qui n'est pas un bloc statique. Cela inclut :
+*   Les joueurs
+*   Les PNJ (Personnages Non Joueurs) et les monstres
+*   Les objets lâchés au sol
+*   Les projectiles (flèches, boules de feu)
 
-### `public static final int VERSION = 5`
-La version actuelle du format de sérialisation (sauvegarde et chargement) des entités.
+La classe de base pour toutes ces entités est `Entity`.
 
-### `public static final KeyedCodec<Model.ModelReference> MODEL`
-Un `KeyedCodec` utilisé pour l'encodage et le décodage du composant `Model.ModelReference` d'une entité, qui définit son modèle visuel. Un "codec" est un système pour convertir des données d'un format à un autre.
+---
 
-### `public static final KeyedCodec<String> DISPLAY_NAME`
-Un `KeyedCodec` utilisé pour l'encodage et le décodage du nom affiché d'une entité.
+## 2. Le Principe Fondamental : l'Architecture ECS
 
-### `public static final KeyedCodec<UUID> UUID`
-Un `KeyedCodec` utilisé pour l'encodage et le décodage de l'`UUID` unique (identifiant universel unique) d'une entité.
+Le point le plus important à comprendre est que Hytale utilise une architecture **ECS (Entité-Composant-Système)**.
 
-### `public static final BuilderCodec<Entity> CODEC`
-Un `BuilderCodec` utilisé pour la sérialisation et la désérialisation des objets `Entity`.
+*   **Entité (`Entity`)**: Ce n'est qu'un **identifiant**. Une coquille vide.
+*   **Composant (`Component`)**: C'est un **bloc de données**. La position, la vie, l'inventaire... tout est un composant attaché à une entité.
+*   **Système (`System`)**: C'est la **logique**. Un système prend toutes les entités qui ont un certain type de composant et effectue des opérations (ex: le système de physique fait bouger les entités ayant un composant `Velocity`).
 
-### `public static final int UNASSIGNED_ID = -1`
-Une constante représentant un ID réseau non assigné pour une entité. Un ID réseau est un identifiant temporaire utilisé par le serveur pour suivre les entités en ligne.
+C'est pour cela que de nombreuses méthodes sur la classe `Entity` sont marquées comme **`@Deprecated`** (dépréciées). Il ne faut pas les utiliser ! L'approche moderne est de ne jamais modifier l'entité directement, mais de **lire et modifier ses composants**.
 
-## Constructeurs
+---
 
-### `public Entity()`
-Le constructeur par défaut pour créer une instance de `Entity`.
+## 3. Hiérarchie : `Entity` vs `LivingEntity`
 
-### `public Entity(@Nullable World world)`
-*Déprécié.* Un constructeur qui initialise une `Entity` et l'associe à un `World` spécifique. Cette méthode est dépréciée, ce qui suggère que les entités devraient être créées et gérées par des systèmes basés sur des composants plus explicites ou des méthodes de création d'entités dédiées.
+Il existe une hiérarchie simple à connaître :
 
-## Méthodes
+*   **`Entity`**: La classe de base pour absolument tout.
+*   **`LivingEntity`**: Hérite de `Entity`. Elle représente les entités "vivantes" et leur ajoute des fonctionnalités communes :
+    *   Un inventaire (`Inventory`)
+    *   Des statistiques (`StatModifiersManager` pour la vie, la vitesse, etc.)
+    *   La capacité de respirer, de subir des dégâts de chute, etc.
 
-### `public boolean remove()`
-Tente de supprimer l'entité de son monde actuel. Cela déclenchera un `EntityRemoveEvent` (un événement de suppression d'entité) et effacera la référence de l'entité dans l'`EntityStore`.
-- **Retourne :** `true` si l'entité a été marquée avec succès pour suppression, `false` sinon (par exemple, si elle était déjà supprimée).
+Un `Player` ou un `Creeper` sont des `LivingEntity`, mais un objet au sol est une simple `Entity`.
 
-### `public void loadIntoWorld(@Nonnull World world)`
-Charge cette entité dans le `World` spécifié. Cette méthode définit le `World` associé à l'entité et lui attribue un ID réseau si ce n'est pas déjà fait.
-- **Paramètres :**
-    - `world` : L'instance du `World` dans lequel l'entité doit être chargée.
-- **Lance :** `IllegalArgumentException` si l'entité est déjà dans un monde.
+---
 
-### `public void unloadFromWorld()`
-Décharge l'entité de son `World` actuel. Cela efface l'association de l'entité avec le `World` et réinitialise son ID réseau.
-- **Lance :** `IllegalArgumentException` si l'entité n'est pas actuellement dans un monde.
+## 4. Comment Interagir avec une Entité
 
-### `public World getWorld()`
-Récupère l'instance du `World` dans lequel cette entité est actuellement chargée.
-- **Retourne :** L'instance du `World`, ou `null` si l'entité n'est pas actuellement dans un monde.
+La bonne méthode consiste toujours à :
+1.  Obtenir une référence à l'entité (souvent via un événement).
+2.  Demander à voir l'un de ses composants.
+3.  Lire ou modifier les données de ce composant.
 
-### `public boolean wasRemoved()`
-Vérifie si cette entité a été marquée pour suppression.
-- **Retourne :** `true` si l'entité a été supprimée, `false` sinon.
+### Exemple : Déplacer une entité
 
-### `public boolean isCollidable()`
-Vérifie si cette entité est considérée comme "collidable" (c'est-à-dire si elle peut entrer en collision avec d'autres objets).
-- **Retourne :** `true` si l'entité peut entrer en collision avec d'autres objets, `false` sinon.
+Voici comment déplacer une entité à une nouvelle position en modifiant son `TransformComponent`.
 
-### `public boolean isHiddenFromLivingEntity(@Nonnull Ref<EntityStore> ref, @Nonnull Ref<EntityStore> targetRef, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-Détermine si cette entité doit être cachée à une entité vivante spécifiée.
-- **Paramètres :**
-    - `ref` : Une `Ref` vers cette entité dans l'`EntityStore`.
-    - `targetRef` : Une `Ref` vers l'entité vivante cible.
-    - `componentAccessor` : Un accesseur pour les composants d'entité.
-- **Retourne :** `true` si cette entité doit être cachée à l'entité cible, `false` sinon.
+```java
+import com.hypixel.hytale.server.api.event.entity.EntityDeathEvent;
+import com.hypixel.hytale.component.Holder;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.math.vector.Vector3d;
 
-### `public void setReference(@Nonnull Ref<EntityStore> reference)`
-Définit la `Ref` interne qui pointe vers les données de cette entité dans l'`EntityStore`. Cette méthode doit généralement être gérée par le système d'entités lui-même, pas directement par les développeurs de mods.
-- **Paramètres :**
-    - `reference` : La `Ref` à associer à cette entité.
-- **Lance :** `IllegalArgumentException` si l'entité a déjà une référence valide.
+// Contexte : dans un listener qui écoute la mort d'une entité.
+public void onEntityDeath(EntityDeathEvent event) {
+    // 1. Obtenir le "Holder" de l'entité depuis l'événement.
+    Holder<EntityStore> entityHolder = event.getHolder();
 
-### `public Ref<EntityStore> getReference()`
-Récupère la `Ref` qui pointe vers les données de cette entité dans l'`EntityStore`.
-- **Retourne :** La `Ref<EntityStore>` pour cette entité, ou `null` si non définie.
+    // 2. Récupérer le composant qui gère la position et la rotation.
+    TransformComponent transform = entityHolder.getComponent(TransformComponent.getComponentType());
 
-### `public Component<EntityStore> clone()`
-Crée un "clone" (une copie en profondeur) de cette instance de `Entity`, incluant tous ses composants.
-- **Retourne :** Une nouvelle instance de `Entity` qui est une copie de l'actuelle.
+    if (transform != null) {
+        // 3. Lire la position actuelle
+        Vector3d currentPosition = transform.getPosition();
+        LOGGER.info("L'entité est morte à la position : {}", currentPosition);
 
-### `public Holder<EntityStore> toHolder()`
-Convertit cette instance d'`Entity` et ses composants associés en un `Holder<EntityStore>`, qui est un conteneur pour les données d'entité utilisé par le système de composants.
-- **Retourne :** Un `Holder<EntityStore>` contenant les données de l'entité.
+        // 4. Modifier la position (par exemple, pour la faire réapparaître plus haut)
+        // Note : dans la pratique, on ne téléporte pas une entité morte,
+        // mais c'est pour l'exemple de modification.
+        transform.getPosition().set(currentPosition.getX(), currentPosition.getY() + 10, currentPosition.getZ());
+        LOGGER.info("L'entité a été déplacée à {}", transform.getPosition());
+    }
+}
+```
 
-## Méthodes Dépréciées
+### Exemple : Accéder à l'inventaire d'une `LivingEntity`
 
-Les méthodes suivantes sont dépréciées et devraient être évitées dans le nouveau code. Elles sont probablement conservées pour la compatibilité ascendante ou sont progressivement remplacées par des interactions basées sur les composants.
+```java
+import com.hypixel.hytale.server.core.entity.LivingEntity;
+import com.hypixel.hytale.server.core.inventory.Inventory;
 
-### `public void setLegacyUUID(@Nullable UUID uuid)`
-*Déprécié.* Définit un `UUID` "legacy" (ancien format) pour l'entité.
+// Supposons que 'entityHolder' contienne une LivingEntity (ex: un PNJ).
 
-### `public int getNetworkId()`
-*Déprécié.* Récupère l'ID réseau attribué à cette entité.
+// On récupère d'abord le composant principal (ex: 'PnjComponent')
+PnjComponent pnj = entityHolder.getComponent(PnjComponent.getComponentType());
 
-### `public String getLegacyDisplayName()`
-*Déprécié.* Récupère l'ancien nom affiché de l'entité.
+// La classe PnjComponent hérite probablement de LivingEntity.
+if (pnj instanceof LivingEntity) {
+    LivingEntity livingEntity = (LivingEntity) pnj;
 
-### `public UUID getUuid()`
-*Déprécié.* Récupère l'`UUID` de l'entité.
+    // On peut maintenant accéder à son inventaire.
+    Inventory inventory = livingEntity.getInventory();
+    
+    // ... et le manipuler.
+}
+```
 
-### `public void setTransformComponent(TransformComponent transform)`
-*Déprécié.* Définit le `TransformComponent` (composant de transformation) pour l'entité.
+---
 
-### `public TransformComponent getTransformComponent()`
-*Déprécié.* Récupère le `TransformComponent` de l'entité.
+## 5. Méthodes Utiles (Approche Moderne)
 
-### `public void moveTo(@Nonnull Ref<EntityStore> ref, double locX, double locY, double locZ, @Nonnull ComponentAccessor<EntityStore> componentAccessor)`
-*Déprécié.* Déplace l'entité aux coordonnées spécifiées.
+Au lieu d'utiliser les méthodes dépréciées, voici les méthodes importantes :
 
-### `public void clearReference()`
-*Déprécié.* Efface la référence interne de l'entité.
+### `remove()`
+Marque l'entité pour qu'elle soit supprimée du monde au prochain "tick" du serveur. Déclenche un `EntityRemoveEvent`.
 
-## Classe Imbriquée : `DefaultAnimations`
+### `getWorld()`
+Retourne le `World` dans lequel se trouve l'entité. Utile pour effectuer des actions sur le monde environnant.
 
-La classe statique imbriquée `DefaultAnimations` fournit des méthodes utilitaires et des constantes pour les ID d'animation courants.
+### `getReference()`
+Retourne la `Ref<EntityStore>`, une référence technique à l'entité dans la base de données ECS. Utile pour des opérations avancées ou pour passer en paramètre à d'autres API.
 
-### Constantes
+### `clone()` et `toHolder()`
+Permettent de créer des copies ou des représentations de l'entité, utiles pour la sérialisation ou la création de "snapshots".
 
--   `public static final String DEATH = "Death"` (Animation de mort)
--   `public static final String HURT = "Hurt"` (Animation de blessure)
--   `public static final String DESPAWN = "Despawn"` (Animation de disparition)
--   `public static final String SWIM_SUFFIX = "Swim"` (Suffixe pour les animations de nage, par exemple "HurtSwim")
--   `public static final String FLY_SUFFIX = "Fly"` (Suffixe pour les animations de vol, par exemple "HurtFly")
+---
+*Le reste de ce document est conservé pour référence, mais rappelez-vous de toujours privilégier l'interaction avec les **composants** plutôt qu'avec l'objet `Entity` lui-même.*
+---
+## Méthodes Dépréciées (À NE PAS UTILISER)
 
-### Méthodes
+Les méthodes suivantes sont dépréciées et ne devraient pas être utilisées. Elles sont listées ici pour information.
 
-### `public static String[] getHurtAnimationIds(@Nonnull MovementStates movementStates, @Nonnull DamageCause damageCause)`
-Génère un tableau d'ID d'animation pertinents pour être blessé, en tenant compte des `MovementStates` (états de mouvement) de l'entité (par exemple, nage, vol) et de la `DamageCause` (cause des dégâts).
-- **Paramètres :**
-    - `movementStates` : Les `MovementStates` actuels de l'entité.
-    - `damageCause` : La `DamageCause` qui a infligé les dégâts.
-- **Retourne :** Un tableau de `String` (ID d'animation).
-
-### `public static String[] getDeathAnimationIds(@Nonnull MovementStates movementStates, @Nonnull DamageCause damageCause)`
-Génère un tableau d'ID d'animation pertinents pour la mort de l'entité, en tenant compte de ses `MovementStates` et de la `DamageCause`.
-- **Paramètres :**
-    - `movementStates` : Les `MovementStates` actuels de l'entité.
-    - `damageCause` : La `DamageCause` qui a conduit à la mort.
-- **Retourne :** Un tableau de `String` (ID d'animation).
+*   `getUuid()`: Utilisez le `UUIDComponent`.
+*   `getTransformComponent()`: Utilisez `holder.getComponent(TransformComponent.getComponentType())`.
+*   `moveTo(...)`: Modifiez directement la position dans le `TransformComponent`.
+*   ...et bien d'autres. Si une méthode est marquée `@Deprecated`, cherchez une alternative basée sur les composants.

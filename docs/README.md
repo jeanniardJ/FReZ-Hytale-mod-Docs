@@ -1,3 +1,5 @@
+> **Note de Navigation :** Pour une table des matières complète et structurée, veuillez consulter le fichier [**SUMMARY.md**](SUMMARY.md).
+
 # Bienvenue dans la Documentation du Projet
 
 Cette documentation sert de "Knowledge Base" (base de connaissances) pour le développement de plugins Hytale. Elle est
@@ -39,10 +41,10 @@ Cette section fournit la documentation technique des différentes APIs disponibl
 
 *   **Général**
     *   [Authentification](api_reference/general/authentication.md)
-    *   [HytaleServer (Déprécié - Voir "API du Cœur du Serveur")](api_reference/general/hytaleserver.md)
+    *   [HytaleServer (Déprécié - Voir "API du Cœur du Serveur")](./api_reference/server/core/README.md)
     *   [Journalisation (Logging)](api_reference/general/logging.md)
     *   [Permissions](api_reference/general/permissions.md)
-    *   [Univers (Déprécié - Voir "API du Cœur du Serveur")](api_reference/general/universe.md)
+    *   [Univers (Déprécié - Voir "API du Cœur du Serveur")](./api_reference/world/world_api.md)
     *   [API Core du Serveur Hytale (EN)](api_reference/server_core_api/HYTALE_CORE_API.md)
     *   [API Core du Serveur Hytale (TR)](api_reference/server_core_api/HYTALE_CORE_API_TR.md)
 *   **Commandes (Général)**
